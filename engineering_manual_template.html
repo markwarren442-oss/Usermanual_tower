@@ -8,6 +8,31 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;700&family=Inter:wght@300;400;500;700&display=swap"
     rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary:   '#0B1D33',
+            primary2:  '#162D4A',
+            accent:    '#F5A623',
+            accent2:   '#4FC3F7',
+            steel:     '#2A4A6B',
+            concrete:  '#B0B8C1',
+          },
+          fontFamily: {
+            title: ['Rajdhani', 'sans-serif'],
+            mono:  ['Share Tech Mono', 'monospace'],
+            sans:  ['Barlow', 'sans-serif'],
+          },
+          backdropBlur: {
+            xs: '4px',
+          }
+        }
+      }
+    }
+  </script>
   <style>
     *,
     *::before,
