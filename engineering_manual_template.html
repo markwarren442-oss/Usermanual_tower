@@ -1,0 +1,2061 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Modular Tower Model Manual</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;700&family=Inter:wght@300;400;500;700&display=swap"
+    rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --primary: #0B1D33;
+      --primary2: #162D4A;
+      --accent: #F5A623;
+      --accent2: #4FC3F7;
+      --steel: #2A4A6B;
+      --concrete: #B0B8C1;
+      --surface: #EEF0F3;
+      --surface2: #DDE1E7;
+      --text: #0B1D33;
+      --text-muted: #5A6A7A;
+      --border: #C5CDD6;
+      --white: #FFFFFF;
+      --mono: 'Share Tech Mono', monospace;
+      --sans: 'Barlow', sans-serif;
+      --title: 'Rajdhani', sans-serif;
+      --radius: 10px;
+      --radius-sm: 5px;
+      --shadow: 0 4px 24px rgba(11, 29, 51, 0.13);
+      --shadow-lg: 0 8px 40px rgba(11, 29, 51, 0.2);
+    }
+
+    html {
+      font-size: 16px;
+      scroll-behavior: smooth;
+    }
+
+    @keyframes gridPan {
+      from { background-position: 0 0 }
+      to { background-position: 40px 40px }
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(32px) }
+      to { opacity: 1; transform: none }
+    }
+    @keyframes slideLeft {
+      from { opacity: 0; transform: translateX(-28px) }
+      to { opacity: 1; transform: none }
+    }
+    @keyframes slideRight {
+      from { opacity: 0; transform: translateX(28px) }
+      to { opacity: 1; transform: none }
+    }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.9) }
+      to { opacity: 1; transform: scale(1) }
+    }
+    @keyframes shimmer {
+      0% { background-position: -600px 0 }
+      100% { background-position: 600px 0 }
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; box-shadow: 0 0 8px var(--accent); }
+      50% { opacity: 0.5; box-shadow: 0 0 20px var(--accent); }
+    }
+    @keyframes beamGrow {
+      from { width: 0 }
+      to { width: 100% }
+    }
+    @keyframes floatDot {
+      0%, 100% { transform: translateY(0) }
+      50% { transform: translateY(-6px) }
+    }
+    @keyframes glowPulse {
+      0%, 100% { box-shadow: 0 0 0 rgba(245,166,35,0); }
+      50% { box-shadow: 0 0 32px rgba(245,166,35,0.35); }
+    }
+    @keyframes orbitGlow {
+      0% { transform: rotate(0deg) translateX(120px) rotate(0deg); opacity:0.6; }
+      100% { transform: rotate(360deg) translateX(120px) rotate(-360deg); opacity:0.3; }
+    }
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(20px) scale(0.97); }
+      to { opacity: 1; transform: none; }
+    }
+    @keyframes borderFlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    @keyframes scanLine {
+      0% { top: 0; }
+      100% { top: 100%; }
+    }
+
+    body {
+      font-family: var(--sans);
+      background: var(--surface);
+      color: var(--text);
+      min-height: 100vh;
+      max-width: 430px;
+      margin: 0 auto;
+      position: relative;
+      overflow-x: hidden;
+      background-image:
+        linear-gradient(rgba(42, 74, 107, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(42, 74, 107, 0.05) 1px, transparent 1px);
+      background-size: 20px 20px;
+      transition: background 0.4s;
+    }
+
+    /* Page-turn transition overlay */
+    .page-transition-overlay {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, var(--primary), var(--accent) 80%);
+      z-index: 9999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s cubic-bezier(.4,0,.2,1);
+    }
+    .page-transition-overlay.active {
+      opacity: 0.18;
+      pointer-events: all;
+    }
+
+    /* ── COVER PAGE ── */
+    .cover {
+      min-height: 100vh;
+      background: linear-gradient(155deg, #040D18 0%, #0B1D33 45%, #162D4A 100%);
+      display: flex;
+      flex-direction: column;
+      padding: 2rem 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cover::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(79, 195, 247, 0.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(79, 195, 247, 0.07) 1px, transparent 1px);
+      background-size: 32px 32px;
+      animation: gridPan 10s linear infinite;
+    }
+
+    /* Glowing orb top-right */
+    .cover::after {
+      content: '';
+      position: absolute;
+      top: -80px;
+      right: -80px;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(245,166,35,0.13) 0%, transparent 70%);
+      animation: glowPulse 4s ease-in-out infinite;
+    }
+
+    /* Second orb bottom-left */
+    .cover-orb {
+      position: absolute;
+      bottom: -60px;
+      left: -60px;
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(79,195,247,0.1) 0%, transparent 70%);
+      animation: glowPulse 5s 1s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    /* Scan line effect */
+    .cover-scan {
+      position: absolute;
+      left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(79,195,247,0.25), transparent);
+      animation: scanLine 6s linear infinite;
+      pointer-events: none;
+    }
+
+    .cover-beam {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent));
+      background-size: 200% 100%;
+      animation: beamGrow 1.4s cubic-bezier(.4, 0, .2, 1) forwards, borderFlow 3s 1.5s linear infinite;
+      box-shadow: 0 0 16px rgba(245,166,35,0.6);
+    }
+
+    .cover-badge {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      text-transform: uppercase;
+      border: 1px solid rgba(245, 166, 35, 0.5);
+      padding: 5px 12px;
+      border-radius: 3px;
+      display: inline-block;
+      width: fit-content;
+      position: relative;
+      z-index: 1;
+      animation: slideLeft 0.8s ease both;
+      clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+    }
+
+    .cover-edition {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      color: rgba(255, 255, 255, 0.3);
+      text-transform: uppercase;
+      position: relative;
+      z-index: 1;
+      animation: slideLeft 0.8s 0.1s ease both;
+    }
+
+    .cover-title {
+      font-family: var(--title);
+      font-weight: 700;
+      font-size: 3.5rem;
+      line-height: 1.0;
+      color: var(--white);
+      margin: 1.5rem 0 0.75rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      position: relative;
+      z-index: 1;
+      animation: slideUp 0.9s 0.2s ease both;
+    }
+
+    .cover-title span {
+      color: var(--accent);
+    }
+
+    .cover-subtitle {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.5);
+      line-height: 1.7;
+      font-weight: 300;
+      max-width: 280px;
+      position: relative;
+      z-index: 1;
+      animation: slideUp 0.9s 0.35s ease both;
+    }
+
+    .cover-divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 1.5rem 0;
+      position: relative;
+      z-index: 1;
+      animation: slideUp 0.9s 0.45s ease both;
+    }
+
+    .cover-divider::before,
+    .cover-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+    }
+
+    .cover-meta {
+      margin-top: auto;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(79, 195, 247, 0.15);
+      position: relative;
+      z-index: 1;
+      animation: slideUp 0.9s 0.55s ease both;
+    }
+
+    .cover-meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 1rem;
+    }
+
+    .cover-label {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      color: rgba(255, 255, 255, 0.3);
+      text-transform: uppercase;
+      margin-bottom: 3px;
+    }
+
+    .cover-value {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.85);
+      font-weight: 500;
+      font-family: var(--title);
+      letter-spacing: 0.05em;
+    }
+
+    .cover-logo {
+      font-family: var(--title);
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--accent2);
+      letter-spacing: 0.08em;
+      text-align: right;
+      line-height: 1.1;
+    }
+
+    .chip-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 1.25rem 0;
+      position: relative;
+      z-index: 1;
+      animation: slideUp 0.9s 0.4s ease both;
+    }
+
+    .chip {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      padding: 5px 12px;
+      border-radius: 3px;
+      font-weight: 400;
+      letter-spacing: 0.06em;
+      clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+    }
+
+    .chip-primary {
+      background: rgba(245, 166, 35, 0.15);
+      color: var(--accent);
+      border: 1px solid rgba(245, 166, 35, 0.3);
+    }
+
+    .chip-teal {
+      background: rgba(79, 195, 247, 0.12);
+      color: var(--accent2);
+      border: 1px solid rgba(79, 195, 247, 0.25);
+    }
+
+    .chip-dark {
+      background: var(--steel);
+      color: var(--white);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(11,29,51,0.85);
+      backdrop-filter: blur(16px) saturate(1.4);
+      -webkit-backdrop-filter: blur(16px) saturate(1.4);
+      border-bottom: 1.5px solid rgba(245,166,35,0.5);
+      padding: 0.7rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 24px rgba(11,29,51,0.35), 0 1px 0 rgba(245,166,35,0.15);
+      transition: background 0.3s;
+    }
+
+    .topbar-title {
+      font-family: var(--title);
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-shadow: 0 0 12px rgba(245,166,35,0.3);
+    }
+
+    .topbar-chapter {
+      font-size: 0.65rem;
+      color: rgba(176,184,193,0.8);
+      font-family: var(--mono);
+      letter-spacing: 0.08em;
+      transition: color 0.3s;
+    }
+
+    .topbar-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 2.5s ease-in-out infinite;
+    }
+
+    /* ── PROGRESS BAR ── */
+    .progress-bar-wrap {
+      height: 3px;
+      background: rgba(42,74,107,0.5);
+      position: sticky;
+      top: 49px;
+      z-index: 99;
+    }
+
+    #progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent));
+      background-size: 200% 100%;
+      width: 0%;
+      transition: width 0.15s linear;
+      box-shadow: 0 0 10px rgba(245,166,35,0.7);
+      animation: borderFlow 2s linear infinite;
+    }
+
+    /* ── SECTION HEADER ── */
+    .section-header {
+      padding: 2rem 1.25rem 1rem;
+    }
+
+    .section-tag {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-tag::before {
+      content: '//';
+      color: var(--accent2);
+    }
+
+    .section-title {
+      font-family: var(--title);
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      line-height: 1.15;
+    }
+
+    .section-desc {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+      margin-top: 0.5rem;
+      font-weight: 300;
+    }
+
+    /* ── TOC ── */
+    .toc-list {
+      padding: 0 1.25rem 1.5rem;
+      list-style: none;
+    }
+
+    .toc-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0.9rem 1rem;
+      margin-bottom: 8px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--steel);
+      border-radius: var(--radius-sm);
+      text-decoration: none;
+      color: var(--text);
+      transition: all 0.3s cubic-bezier(.4, 0, .2, 1);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(11, 29, 51, 0.07);
+    }
+
+    .toc-item::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: linear-gradient(to bottom, var(--accent), var(--accent2));
+      transform: scaleY(0);
+      transform-origin: bottom;
+      transition: transform 0.3s cubic-bezier(.4, 0, .2, 1);
+    }
+
+    .toc-item::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(245,166,35,0.07), transparent 60%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .toc-item:hover {
+      background: rgba(238,240,243,0.9);
+      transform: translateX(6px);
+      box-shadow: 0 4px 20px rgba(11,29,51,0.13);
+      border-left-color: var(--accent);
+    }
+
+    .toc-item:hover::before { transform: scaleY(1); }
+    .toc-item:hover::after { opacity: 1; }
+
+    .toc-num {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--accent);
+      font-weight: 400;
+      min-width: 28px;
+      text-shadow: 0 0 8px rgba(245,166,35,0.4);
+    }
+
+    .toc-text { flex: 1; }
+
+    .toc-chapter {
+      font-family: var(--title);
+      font-weight: 600;
+      font-size: 0.95rem;
+      display: block;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .toc-sub {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 300;
+      font-family: var(--mono);
+    }
+
+    .toc-arrow {
+      color: var(--accent);
+      font-size: 1.1rem;
+      transition: transform 0.3s cubic-bezier(.4,0,.2,1), opacity 0.3s;
+      opacity: 0.6;
+    }
+
+    .toc-item:hover .toc-arrow {
+      transform: translateX(6px);
+      opacity: 1;
+    }
+
+    /* ── CHAPTER BREAK ── */
+    .chapter-break {
+      margin: 0 -1.25rem;
+      padding: 2.5rem 1.5rem;
+      background: linear-gradient(135deg, #040D18 0%, var(--primary) 50%, var(--primary2) 100%);
+      color: var(--white);
+      position: relative;
+      overflow: hidden;
+      margin-top: 2rem;
+    }
+
+    .chapter-break::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(rgba(79,195,247,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(79,195,247,0.06) 1px, transparent 1px);
+      background-size: 24px 24px;
+      animation: gridPan 12s linear infinite;
+    }
+
+    .chapter-break::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent));
+      background-size: 200% 100%;
+      animation: borderFlow 3s linear infinite;
+    }
+
+    /* Glowing accent circle behind chapter number */
+    .chapter-break-glow {
+      position: absolute;
+      right: -20px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(245,166,35,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .chapter-num {
+      font-family: var(--title);
+      font-size: 5.5rem;
+      font-weight: 700;
+      color: rgba(255,255,255,0.05);
+      line-height: 1;
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      letter-spacing: -0.04em;
+    }
+
+    .chapter-label {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+      position: relative;
+      z-index: 1;
+      text-shadow: 0 0 10px rgba(245,166,35,0.5);
+    }
+
+    .chapter-name {
+      font-family: var(--title);
+      font-size: 1.7rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      line-height: 1.1;
+      max-width: 65%;
+      position: relative;
+      z-index: 1;
+      text-shadow: 0 2px 16px rgba(11,29,51,0.5);
+    }
+
+    /* ── PAGES ── */
+    .page {
+      padding: 0 1.25rem 2rem;
+    }
+
+    /* ── CALLOUTS ── */
+    .callout {
+      border-radius: var(--radius-sm);
+      padding: 1rem 1.125rem;
+      margin: 1.25rem 0;
+      border-left: 4px solid;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .callout:hover {
+      transform: translateX(3px);
+      box-shadow: var(--shadow);
+    }
+
+    .callout::before {
+      content: '';
+      position: absolute;
+      right: -20px;
+      top: -20px;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      opacity: 0.08;
+    }
+
+    .callout-note {
+      background: #E8F4FD;
+      border-color: #2196F3;
+    }
+
+    .callout-note::before {
+      background: #2196F3;
+    }
+
+    .callout-warn {
+      background: #FFF8E1;
+      border-color: #FFC107;
+    }
+
+    .callout-warn::before {
+      background: #FFC107;
+    }
+
+    .callout-danger {
+      background: #FFEBEE;
+      border-color: #F44336;
+    }
+
+    .callout-danger::before {
+      background: #F44336;
+    }
+
+    .callout-tip {
+      background: #E8F5E9;
+      border-color: #4CAF50;
+    }
+
+    .callout-tip::before {
+      background: #4CAF50;
+    }
+
+    .callout-tag {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      font-weight: 400;
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    .callout-note .callout-tag {
+      color: #1565C0;
+    }
+
+    .callout-warn .callout-tag {
+      color: #F57F17;
+    }
+
+    .callout-danger .callout-tag {
+      color: #B71C1C;
+    }
+
+    .callout-tip .callout-tag {
+      color: #2E7D32;
+    }
+
+    .callout p {
+      font-size: 0.85rem;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .callout-note p {
+      color: #1A3A5C;
+    }
+
+    .callout-warn p {
+      color: #5D3A00;
+    }
+
+    .callout-danger p {
+      color: #7F1D1D;
+    }
+
+    .callout-tip p {
+      color: #1B5E20;
+    }
+
+    /* ── DEFINITION ── */
+    .definition {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary2) 100%);
+      color: var(--white);
+      border-radius: var(--radius-sm);
+      padding: 1.25rem;
+      margin: 1.25rem 0;
+      border-left: 4px solid var(--accent);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+
+    .definition::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(rgba(79, 195, 247, 0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(79, 195, 247, 0.04) 1px, transparent 1px);
+      background-size: 16px 16px;
+    }
+
+    .definition:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .definition-term {
+      font-family: var(--title);
+      font-size: 0.95rem;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      position: relative;
+      z-index: 1;
+    }
+
+    .definition p {
+      font-size: 0.875rem;
+      line-height: 1.65;
+      color: rgba(255, 255, 255, 0.75);
+      font-weight: 300;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── FORMULA / HIGHLIGHT BLOCK ── */
+    .formula-block {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--accent2);
+      border-radius: var(--radius-sm);
+      padding: 1.25rem;
+      margin: 1.25rem 0;
+      overflow-x: auto;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 2px 8px rgba(11, 29, 51, 0.07);
+    }
+
+    .formula-block:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
+
+    .formula-label {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 0.75rem;
+      display: block;
+    }
+
+    .formula {
+      font-family: var(--mono);
+      font-size: 1.1rem;
+      color: var(--primary);
+      font-weight: 400;
+      letter-spacing: 0.04em;
+      display: block;
+      background: var(--surface);
+      padding: 0.6rem 0.8rem;
+      border-radius: var(--radius-sm);
+      border-left: 3px solid var(--accent);
+    }
+
+    .formula-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.6rem;
+      font-weight: 300;
+      line-height: 1.55;
+    }
+
+    /* ── STEPS ── */
+    .steps {
+      list-style: none;
+      padding: 0;
+      margin: 1.25rem 0;
+    }
+
+    .step {
+      display: flex;
+      gap: 14px;
+      padding-bottom: 1.25rem;
+      position: relative;
+    }
+
+    .step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      left: 14px;
+      top: 32px;
+      bottom: 0;
+      width: 1px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+    }
+
+    .step-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 3px;
+      background: linear-gradient(135deg, var(--accent), #E8920C);
+      color: var(--primary);
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      font-weight: 400;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      z-index: 1;
+      box-shadow: 0 2px 8px rgba(245, 166, 35, 0.35);
+      clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+    }
+
+    .step-body {
+      flex: 1;
+      padding-top: 4px;
+    }
+
+    .step-title {
+      font-family: var(--title);
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 4px;
+      color: var(--primary);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .step-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      font-weight: 300;
+    }
+
+    /* ── TEAM GRID ── */
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin: 1.25rem 0;
+    }
+
+    .team-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--accent);
+      border-radius: var(--radius-sm);
+      padding: 1rem 0.5rem;
+      text-align: center;
+      box-shadow: 0 2px 12px rgba(11,29,51,0.08);
+      transition: transform 0.3s cubic-bezier(.4,0,.2,1), box-shadow 0.3s, border-color 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .team-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(245,166,35,0.04) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .team-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 28px rgba(11,29,51,0.16);
+      border-top-color: var(--accent2);
+    }
+
+    .team-card:hover::before { opacity: 1; }
+
+    .team-img {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--surface2);
+      margin: 0 auto 0.75rem;
+      display: block;
+      object-fit: cover;
+      border: 2px solid rgba(245,166,35,0.3);
+      box-shadow: 0 0 0 3px rgba(245,166,35,0.1), 0 2px 10px rgba(11,29,51,0.12);
+      transition: box-shadow 0.3s, border-color 0.3s;
+    }
+
+    .team-card:hover .team-img {
+      box-shadow: 0 0 0 4px rgba(79,195,247,0.25), 0 4px 16px rgba(11,29,51,0.18);
+      border-color: var(--accent2);
+    }
+
+    .team-name {
+      font-family: var(--title);
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--primary);
+      line-height: 1.2;
+      margin-bottom: 0.25rem;
+      letter-spacing: 0.02em;
+    }
+
+    .team-role {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+    }
+
+    /* ── TABLE ── */
+    .table-wrapper {
+      margin: 1.25rem 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(11, 29, 51, 0.07);
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+
+    .data-table thead {
+      background: linear-gradient(90deg, var(--primary), var(--primary2));
+      color: var(--white);
+    }
+
+    .data-table th {
+      padding: 0.7rem 0.875rem;
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 400;
+      text-align: left;
+    }
+
+    .data-table td {
+      padding: 0.65rem 0.875rem;
+      border-top: 1px solid var(--border);
+      color: var(--text);
+      line-height: 1.5;
+      transition: background 0.15s;
+    }
+
+    .data-table tr:hover td {
+      background: rgba(245, 166, 35, 0.06);
+    }
+
+    .data-table tr:nth-child(even) td {
+      background: var(--surface2);
+    }
+
+    .data-table tr:nth-child(even):hover td {
+      background: rgba(245, 166, 35, 0.08);
+    }
+
+    /* ── FIGURE ── */
+    .figure {
+      margin: 1.25rem 0;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 8px rgba(11, 29, 51, 0.07);
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+
+    .figure:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .figure-img {
+      background: linear-gradient(135deg, var(--surface2) 0%, var(--surface) 100%);
+      height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .figure-img::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(rgba(42, 74, 107, 0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(42, 74, 107, 0.07) 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+
+    .figure-icon {
+      font-size: 2.5rem;
+      opacity: 0.25;
+      position: relative;
+      z-index: 1;
+    }
+
+    .figure-placeholder-text {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      position: relative;
+      z-index: 1;
+    }
+
+    .figure-caption {
+      padding: 0.625rem 0.875rem;
+      background: var(--white);
+      border-top: 1px solid var(--border);
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-weight: 300;
+    }
+
+    .figure-caption strong {
+      color: var(--primary);
+      font-weight: 700;
+      font-family: var(--title);
+    }
+
+    /* ── BODY TEXT ── */
+    .body-text {
+      font-size: 0.9rem;
+      line-height: 1.8;
+      color: var(--text);
+      font-weight: 300;
+      margin: 1rem 0;
+    }
+
+    .body-text strong {
+      font-weight: 700;
+      color: var(--primary);
+      font-family: var(--title);
+      letter-spacing: 0.03em;
+    }
+
+    h2.content-h2 {
+      font-family: var(--title);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin: 2rem 0 0.5rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    h2.content-h2::before {
+      content: '■';
+      color: var(--accent);
+      font-size: 0.6rem;
+      flex-shrink: 0;
+    }
+
+    h2.content-h2::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--border), transparent);
+    }
+
+    h3.content-h3 {
+      font-family: var(--title);
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--steel);
+      margin: 1.5rem 0 0.4rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    h3.content-h3::before {
+      content: '//';
+      font-family: var(--mono);
+      color: var(--accent2);
+      font-size: 0.75rem;
+      font-weight: 400;
+    }
+
+    /* ── QUIZ ── */
+    .quiz-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--accent);
+      border-radius: var(--radius-sm);
+      padding: 1.25rem;
+      margin: 1.25rem 0;
+      box-shadow: 0 2px 8px rgba(11, 29, 51, 0.07);
+    }
+
+    .quiz-q {
+      font-family: var(--title);
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      line-height: 1.5;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: var(--primary);
+    }
+
+    .quiz-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 0.625rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      margin-bottom: 6px;
+      font-size: 0.83rem;
+      cursor: pointer;
+      transition: all 0.18s cubic-bezier(.4, 0, .2, 1);
+    }
+
+    .quiz-option:hover {
+      background: var(--surface2);
+      border-color: var(--steel);
+      transform: translateX(4px);
+    }
+
+    .quiz-option.correct {
+      border-color: #4CAF50;
+      background: #E8F5E9;
+      color: #1B5E20;
+    }
+
+    .quiz-option.wrong {
+      border-color: #F44336;
+      background: #FFEBEE;
+      color: #7F1D1D;
+    }
+
+    .quiz-letter {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 400;
+      min-width: 18px;
+      color: var(--accent);
+      margin-top: 1px;
+    }
+
+    /* ── FOOTER ── */
+    .page-footer {
+      padding: 1.5rem 1.25rem;
+      border-top: 2px solid var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 2rem;
+      background: var(--primary);
+      border-radius: 0;
+    }
+
+    .page-num {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--concrete);
+      letter-spacing: 0.1em;
+    }
+
+    .page-course {
+      font-size: 0.7rem;
+      color: var(--concrete);
+      font-weight: 300;
+      font-family: var(--mono);
+    }
+
+    /* ── SCROLL ANIMATIONS ── */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s cubic-bezier(.4, 0, .2, 1), transform 0.6s cubic-bezier(.4, 0, .2, 1);
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    .fade-in:nth-child(2) { transition-delay: 0.09s; }
+    .fade-in:nth-child(3) { transition-delay: 0.18s; }
+    .fade-in:nth-child(4) { transition-delay: 0.27s; }
+    .fade-in:nth-child(5) { transition-delay: 0.36s; }
+    .fade-in:nth-child(6) { transition-delay: 0.45s; }
+
+    /* ── PAGE NAV BAR ── */
+    body { padding-bottom: 72px; }
+
+    .page-nav {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 430px;
+      background: rgba(11,29,51,0.92);
+      backdrop-filter: blur(20px) saturate(1.4);
+      -webkit-backdrop-filter: blur(20px) saturate(1.4);
+      border-top: 1.5px solid rgba(245,166,35,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.6rem 1rem;
+      z-index: 200;
+      box-shadow: 0 -4px 28px rgba(11,29,51,0.4), 0 -1px 0 rgba(245,166,35,0.1);
+    }
+
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(42,74,107,0.7);
+      border: 1px solid rgba(79,195,247,0.25);
+      border-radius: 6px;
+      color: var(--white);
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(.4, 0, .2, 1);
+      outline: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .nav-btn:hover, .nav-btn:active {
+      background: var(--accent);
+      color: var(--primary);
+      border-color: var(--accent);
+      transform: scale(1.06);
+      box-shadow: 0 0 18px rgba(245,166,35,0.5);
+    }
+
+    .nav-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .nav-btn .nav-arrow { font-size: 1rem; line-height: 1; }
+
+    .nav-indicator {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .nav-page-label {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      color: rgba(176,184,193,0.85);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .nav-dots { display: flex; gap: 5px; }
+
+    .nav-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(42,74,107,0.8);
+      transition: background 0.3s, transform 0.3s, box-shadow 0.3s;
+      cursor: pointer;
+    }
+
+    .nav-dot.active {
+      background: var(--accent);
+      transform: scale(1.5);
+      box-shadow: 0 0 8px rgba(245,166,35,0.7);
+    }
+
+    /* ── PAGE FOOTER ── */
+    .page-footer {
+      padding: 1.5rem 1.25rem;
+      border-top: 1.5px solid rgba(245,166,35,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 2rem;
+      background: rgba(11,29,51,0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .page-num {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--concrete);
+      letter-spacing: 0.1em;
+    }
+
+    .page-course {
+      font-size: 0.7rem;
+      color: var(--concrete);
+      font-weight: 300;
+      font-family: var(--mono);
+    }
+  </style>
+</head>
+
+<body>
+
+  <section class="cover" id="cover">
+    <div class="cover-orb"></div>
+    <div class="cover-scan"></div>
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:2rem;">
+      <span class="cover-badge">CE308L Project</span>
+      <span class="cover-edition">FEB 2026</span>
+    </div>
+
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center;">
+      <h1 class="cover-title">
+        Modular<br><span>Tower</span><br>Model
+      </h1>
+      <p class="cover-subtitle">Interactive, scaled prototype for structural analysis and theory of structures.</p>
+      <div class="cover-divider"></div>
+      <div class="chip-grid">
+        <span class="chip chip-primary" style="background:rgba(255,92,26,0.2);">Theory of Structures</span>
+        <span class="chip chip-teal"
+          style="background:rgba(0,194,168,0.15); color:#00C2A8; border-color:rgba(0,194,168,0.3);">Structural
+          Analysis</span>
+        <span class="chip chip-dark">Civil Eng</span>
+      </div>
+    </div>
+
+    <div class="cover-meta">
+      <div class="cover-meta-row">
+        <div>
+          <p class="cover-label">Instructor</p>
+          <p class="cover-value">Engr. Karl Justine G. Atienza</p>
+        </div>
+        <div>
+          <p class="cover-label">Course</p>
+          <p class="cover-value">BS Civil Engineering</p>
+        </div>
+        <div class="cover-logo">JPC<br></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">Modular Tower Manual</div>
+      <div class="topbar-chapter">Project Reference Guide</div>
+    </div>
+    <div class="topbar-dot"></div>
+  </div>
+  <div class="progress-bar-wrap">
+    <div id="progress-bar"></div>
+  </div>
+
+  <div class="section-header fade-in" id="toc">
+    <p class="section-tag">Navigation</p>
+    <h2 class="section-title">Table of Contents</h2>
+    <p class="section-desc">Jump to any chapter or section below.</p>
+  </div>
+
+  <ul class="toc-list fade-in">
+    <a href="#ch1" class="toc-item">
+      <span class="toc-num">01</span>
+      <span class="toc-text">
+        <span class="toc-chapter">Project Overview</span>
+        <span class="toc-sub">Objectives, Rationale, and Team</span>
+      </span>
+      <span class="toc-arrow">›</span>
+    </a>
+    <a href="#ch2" class="toc-item">
+      <span class="toc-num">02</span>
+      <span class="toc-text">
+        <span class="toc-chapter">Core Concepts</span>
+        <span class="toc-sub">Structural theory and behavior</span>
+      </span>
+      <span class="toc-arrow">›</span>
+    </a>
+    <a href="#ch3" class="toc-item">
+      <span class="toc-num">03</span>
+      <span class="toc-text">
+        <span class="toc-chapter">Materials & Budget</span>
+        <span class="toc-sub">Itemized costs and materials required</span>
+      </span>
+      <span class="toc-arrow">›</span>
+    </a>
+    <a href="#ch4" class="toc-item">
+      <span class="toc-num">04</span>
+      <span class="toc-text">
+        <span class="toc-chapter">Fabrication Procedure</span>
+        <span class="toc-sub">Step-by-step assembly guide</span>
+      </span>
+      <span class="toc-arrow">›</span>
+    </a>
+    <a href="#ch5" class="toc-item">
+      <span class="toc-num">05</span>
+      <span class="toc-text">
+        <span class="toc-chapter">Expected Outcomes</span>
+        <span class="toc-sub">Impacts and learning assessments</span>
+      </span>
+      <span class="toc-arrow">›</span>
+    </a>
+    <a href="#ch6" class="toc-item">
+      <span class="toc-num">06</span>
+      <span class="toc-text">
+        <span class="toc-chapter">Quick Reference</span>
+        <span class="toc-sub">Institutional details</span>
+      </span>
+      <span class="toc-arrow">›</span>
+    </a>
+  </ul>
+
+  <div class="chapter-break" id="ch1">
+    <div class="chapter-break-glow"></div>
+    <span class="chapter-num">01</span>
+    <p class="chapter-label">Chapter 01</p>
+    <h2 class="chapter-name">Project Overview</h2>
+  </div>
+
+  <div class="page">
+    <div class="section-header fade-in" style="padding-left:0; padding-right:0;">
+      <p class="section-tag">Chapter 01</p>
+      <h2 class="section-title">Project Overview</h2>
+    </div>
+
+    <p class="body-text fade-in">
+      This manual serves as the primary reference for the Design and Fabrication of a Modular Tower Model for Structural
+      Analysis.
+    </p>
+
+    <div class="callout callout-note fade-in">
+      <span class="callout-tag">📋 Note</span>
+      <p>This model uses a high-precision interlocking system (LEGO) to allow civil engineering students to physically
+        manipulate variables.</p>
+    </div>
+
+    <h2 class="content-h2 fade-in">Project Objectives</h2>
+    <ul class="steps fade-in">
+      <li class="step">
+        <span class="step-num">1</span>
+        <div class="step-body">
+          <p class="step-title">Develop Interactive Model</p>
+          <p class="step-desc">To develop and utilize an interactive LEGO structural model that helps students
+            understand fundamental structural engineering concepts through hands-on construction and experimentation.
+          </p>
+        </div>
+      </li>
+      <li class="step">
+        <span class="step-num">2</span>
+        <div class="step-body">
+          <p class="step-title">Demonstrate Behavior</p>
+          <p class="step-desc">To demonstrate real-life structural behavior by constructing models that represent common
+            engineering structures such as towers, frames, and braced systems.</p>
+        </div>
+      </li>
+      <li class="step">
+        <span class="step-num">3</span>
+        <div class="step-body">
+          <p class="step-title">Skill Development</p>
+          <p class="step-desc">To enhance problem-solving, critical thinking, teamwork, and collaboration skills by
+            allowing students to experiment with different structural designs.</p>
+        </div>
+      </li>
+    </ul>
+
+    <h2 class="content-h2 fade-in">Team Roster</h2>
+    <div class="team-grid fade-in">
+      <div class="team-card">
+        <img class="team-img"
+          src="https://api.dicebear.com/7.x/initials/svg?seed=Zhanice&backgroundColor=162D4A&textColor=ffffff"
+          alt="Bayle, Zhanice M.">
+        <div class="team-name">Bayle, Zhanice M.</div>
+        <div class="team-role">Student Researcher</div>
+      </div>
+      <div class="team-card">
+        <img class="team-img"
+          src="https://api.dicebear.com/7.x/initials/svg?seed=Trishia&backgroundColor=162D4A&textColor=ffffff"
+          alt="David, Trishia Faye">
+        <div class="team-name">David, Trishia Faye</div>
+        <div class="team-role">Student Researcher</div>
+      </div>
+      <div class="team-card">
+        <img class="team-img"
+          src="https://api.dicebear.com/7.x/initials/svg?seed=Mark&backgroundColor=162D4A&textColor=ffffff"
+          alt="Fajiculay, Mark Angel">
+        <div class="team-name">Fajiculay, Mark Angel</div>
+        <div class="team-role">Student Researcher</div>
+      </div>
+      <div class="team-card">
+        <img class="team-img"
+          src="https://api.dicebear.com/7.x/initials/svg?seed=Jhoanna&backgroundColor=162D4A&textColor=ffffff"
+          alt="Guiab, Jhoanna Bell M.">
+        <div class="team-name">Guiab, Jhoanna Bell M.</div>
+        <div class="team-role">Student Researcher</div>
+      </div>
+      <div class="team-card">
+        <img class="team-img"
+          src="https://api.dicebear.com/7.x/initials/svg?seed=Jan&backgroundColor=162D4A&textColor=ffffff"
+          alt="Herrera, Jan Patrick P.">
+        <div class="team-name">Herrera, Jan Patrick P.</div>
+        <div class="team-role">Student Researcher</div>
+      </div>
+      <div class="team-card">
+        <img class="team-img"
+          src="https://api.dicebear.com/7.x/initials/svg?seed=Marianne&backgroundColor=162D4A&textColor=ffffff"
+          alt="Maralit, Marianne Jay V.">
+        <div class="team-name">Maralit, Marianne Jay V.</div>
+        <div class="team-role">Student Researcher</div>
+      </div>
+      <div class="team-card">
+        <img class="team-img"
+          src="https://api.dicebear.com/7.x/initials/svg?seed=Gualberto&backgroundColor=162D4A&textColor=ffffff"
+          alt="Mesana, Gualberto">
+        <div class="team-name">Mesana, Gualberto</div>
+        <div class="team-role">Student Researcher</div>
+      </div>
+      <div class="team-card">
+        <img class="team-img"
+          src="https://api.dicebear.com/7.x/initials/svg?seed=Jewel&backgroundColor=162D4A&textColor=ffffff"
+          alt="Micosa, Jewel Lorenne L.">
+        <div class="team-name">Micosa, Jewel Lorenne L.</div>
+        <div class="team-role">Student Researcher</div>
+      </div>
+      <div class="team-card">
+        <img class="team-img"
+          src="https://api.dicebear.com/7.x/initials/svg?seed=Rosario&backgroundColor=162D4A&textColor=ffffff"
+          alt="Rosario, Mark Ian D.">
+        <div class="team-name">Rosario, Mark Ian D.</div>
+        <div class="team-role">Student Researcher</div>
+      </div>
+      <div class="team-card">
+        <img class="team-img"
+          src="https://api.dicebear.com/7.x/initials/svg?seed=Aljun&backgroundColor=162D4A&textColor=ffffff"
+          alt="Rustia, Aljun C.">
+        <div class="team-name">Rustia, Aljun C.</div>
+        <div class="team-role">Student Researcher</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="chapter-break" id="ch2">
+    <div class="chapter-break-glow"></div>
+    <span class="chapter-num">02</span>
+    <p class="chapter-label">Chapter 02</p>
+    <h2 class="chapter-name">Core Concepts</h2>
+  </div>
+
+  <div class="page">
+    <div class="section-header fade-in" style="padding-left:0; padding-right:0;">
+      <p class="section-tag">Chapter 02</p>
+      <h2 class="section-title">Core Concepts</h2>
+      <p class="section-desc">Foundational theories and key terminology for the course.</p>
+    </div>
+
+    <h2 class="content-h2 fade-in">Key Terminology</h2>
+
+    <div class="definition fade-in">
+      <p class="definition-term">TERM 1 — Theory of Structures</p>
+      <p>Complex mathematical abstractions translated into a tangible, experimental format utilizing a high-precision
+        interlocking system.</p>
+    </div>
+
+    <div class="definition fade-in" style="background:#00453E; margin-top:-0.5rem;">
+      <p class="definition-term" style="color:#4FFFF0;">TERM 2 — Force Redistribution</p>
+      <p>Demonstrated through tactile feedback that a digital simulation cannot fully replicate, showing how internal
+        forces navigate a system.</p>
+    </div>
+
+    <h2 class="content-h2 fade-in">Topic Keywords</h2>
+    <div class="chip-grid fade-in">
+      <span class="chip chip-primary">Determinacy</span>
+      <span class="chip chip-teal">Deflection</span>
+      <span class="chip chip-dark">Load Distribution</span>
+      <span class="chip chip-primary">Stability</span>
+      <span class="chip chip-teal">Braced Systems</span>
+      <span class="chip chip-dark">Structural Balance</span>
+    </div>
+
+    <div class="figure fade-in">
+      <div class="">
+        <div class="figure-icon">📐</div>
+        <p class="figure-placeholder-text">[ AutoCAD Reference ]</p>
+      </div>
+      <p class="figure-caption"><strong>Figure 2.1</strong> — AutoCAD Drawing Reference (tower (2).dwg) mapping
+        structural dimensions for assembly.</p>
+    </div>
+
+  </div>
+
+  <div class="chapter-break" id="ch3">
+    <div class="chapter-break-glow"></div>
+    <span class="chapter-num">03</span>
+    <p class="chapter-label">Chapter 03</p>
+    <h2 class="chapter-name">Materials & Budget</h2>
+  </div>
+
+  <div class="page">
+    <div class="section-header fade-in" style="padding-left:0; padding-right:0;">
+      <p class="section-tag">Chapter 03</p>
+      <h2 class="section-title">Materials & Budget</h2>
+      <p class="section-desc">List of all required materials and the estimated budget for project completion.</p>
+    </div>
+
+    <h2 class="content-h2 fade-in">Budget Summary</h2>
+
+    <div class="formula-block fade-in">
+      <span class="formula-label">Total Estimated Cost</span>
+      <span class="formula">1010.00 pesos</span>
+      <p class="formula-desc">The proposed budget is kept minimal while ensuring that all necessary materials are
+        included to successfully carry out the proposed project.</p>
+    </div>
+
+    <h3 class="content-h3 fade-in">Material Breakdown</h3>
+    <div class="table-wrapper fade-in">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Material</th>
+            <th>Quantity</th>
+            <th>Unit Cost (₱)</th>
+            <th>Total Cost (₱)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Balloon Stick</td>
+            <td>1 pc</td>
+            <td>90</td>
+            <td>90</td>
+          </tr>
+          <tr>
+            <td>Oily Glue</td>
+            <td>2 pcs</td>
+            <td>60</td>
+            <td>120</td>
+          </tr>
+          <tr>
+            <td>Sintra Board</td>
+            <td>1 pc</td>
+            <td>100</td>
+            <td>100</td>
+          </tr>
+          <tr>
+            <td>PVC</td>
+            <td>1 pc</td>
+            <td>100</td>
+            <td>100</td>
+          </tr>
+          <tr>
+            <td>Cutter & Folder</td>
+            <td>1 pc each</td>
+            <td>50 each</td>
+            <td>100 total</td>
+          </tr>
+          <tr>
+            <td>Paint</td>
+            <td>1 pc</td>
+            <td>150</td>
+            <td>150</td>
+          </tr>
+          <tr>
+            <td>Sticker Paper</td>
+            <td>1 pc</td>
+            <td>50</td>
+            <td>50</td>
+          </tr>
+          <tr>
+            <td>S4S</td>
+            <td>1 pc</td>
+            <td>100</td>
+            <td>100</td>
+          </tr>
+          <tr>
+            <td>Hinge & Holder</td>
+            <td>1 pc each</td>
+            <td>100 each</td>
+            <td>200 total</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="chapter-break" id="ch4">
+    <div class="chapter-break-glow"></div>
+    <span class="chapter-num">04</span>
+    <p class="chapter-label">Chapter 04</p>
+    <h2 class="chapter-name">Fabrication Procedure</h2>
+  </div>
+
+  <div class="page">
+    <div class="section-header fade-in" style="padding-left:0; padding-right:0;">
+      <p class="section-tag">Chapter 04</p>
+      <h2 class="section-title">Fabrication Procedure</h2>
+      <p class="section-desc">Procedure of Making the Tower.</p>
+    </div>
+
+    <div class="callout callout-warn fade-in">
+      <span class="callout-tag">⚠️ Construction Note</span>
+      <p>Construct the tower in detachable sections so that each part can be assembled and disassembled easily during
+        presentation.</p>
+    </div>
+
+    <h2 class="content-h2 fade-in">Step-by-step Fabrication</h2>
+    <ul class="steps fade-in">
+      <li class="step">
+        <span class="step-num">1</span>
+        <div class="step-body">
+          <p class="step-title">Setup & Preparation</p>
+          <p class="step-desc">Prepare all required materials such as balloon sticks, paste/adhesive, cutter, ruler,
+            measuring tools, and the proposed tower design. Measure and cut the balloon sticks according to the required
+            lengths for the base, columns, braces, and upper sections.</p>
+        </div>
+      </li>
+      <li class="step">
+        <span class="step-num">2</span>
+        <div class="step-body">
+          <p class="step-title">Base Construction</p>
+          <p class="step-desc">Build the base first by forming a wide and stable foundation. Ensure all joints are
+            firmly attached and aligned properly.</p>
+        </div>
+      </li>
+      <li class="step">
+        <span class="step-num">3</span>
+        <div class="step-body">
+          <p class="step-title">Vertical & Horizontal Assembly</p>
+          <p class="step-desc">Assemble the vertical members or columns upward from the base, followed by horizontal
+            members and diagonal bracing to increase strength and stability.</p>
+        </div>
+      </li>
+      <li class="step">
+        <span class="step-num">4</span>
+        <div class="step-body">
+          <p class="step-title">Upper Sections & Reinforcement</p>
+          <p class="step-desc">Continue constructing the middle and upper portions of the tower, gradually reducing the
+            width as the height increases based on the design. Allow each connected section to dry properly before
+            attaching the next part. Inspect all sections and reinforce weak joints.</p>
+        </div>
+      </li>
+      <li class="step">
+        <span class="step-num">5</span>
+        <div class="step-body">
+          <p class="step-title">Storage & Transport</p>
+          <p class="step-desc">Create a storage box inspired by a chessboard-type container, with partitions or spaces
+            intended for each detachable tower section. Arrange and place all disassembled tower parts inside the box
+            properly.</p>
+        </div>
+      </li>
+    </ul>
+
+  </div>
+
+  <div class="chapter-break" id="ch5">
+    <div class="chapter-break-glow"></div>
+    <span class="chapter-num">05</span>
+    <p class="chapter-label">Chapter 05</p>
+    <h2 class="chapter-name">Expected Outcomes</h2>
+  </div>
+
+  <div class="page">
+    <div class="section-header fade-in" style="padding-left:0; padding-right:0;">
+      <p class="section-tag">Chapter 05</p>
+      <h2 class="section-title">Expected Outcomes</h2>
+      <p class="section-desc">The anticipated educational impacts of the model.</p>
+    </div>
+
+    <h2 class="content-h2 fade-in">Educational Value</h2>
+
+    <div class="formula-block fade-in" style="background:#FFF7E6; border-color:#F59E0B;">
+      <span class="formula-label" style="color:#92400E;">Primary Outcome</span>
+      <span class="formula" style="font-size:0.85rem; font-weight:400; color:#1A1A1A; line-height:1.6;">The expected
+        outcome of this study is the successful development of an interactive LEGO tower model that will help students
+        better understand fundamental structural engineering concepts such as stability, load distribution, balance, and
+        structural behavior.</span>
+    </div>
+
+    <div class="formula-block fade-in">
+      <span class="formula-label">Long-term Impact</span>
+      <span class="formula" style="font-size:0.85rem; font-weight:400; color:#1A1A1A; line-height:1.6;">The LEGO tower
+        model is expected to serve as a simple yet effective educational tool that demonstrates real-life structural
+        behavior, promotes experiential learning, and increases students’ interest and appreciation for structural and
+        civil engineering concepts.</span>
+    </div>
+
+    <h2 class="content-h2 fade-in">Comprehension Check</h2>
+
+    <div class="quiz-card fade-in">
+      <p class="quiz-q">Q1. What type of storage box is intended for the detachable tower sections?</p>
+      <div class="quiz-option" onclick="selectOption(this, false)">
+        <span class="quiz-letter">A</span> Metal shipping crate
+      </div>
+      <div class="quiz-option" onclick="selectOption(this, true)">
+        <span class="quiz-letter">B</span> A chessboard-type container
+      </div>
+      <div class="quiz-option" onclick="selectOption(this, false)">
+        <span class="quiz-letter">C</span> A plastic cylindrical tube
+      </div>
+      <div class="quiz-option" onclick="selectOption(this, false)">
+        <span class="quiz-letter">D</span> A standard cardboard folder
+      </div>
+    </div>
+
+  </div>
+
+  <div class="chapter-break" id="ch6">
+    <div class="chapter-break-glow"></div>
+    <span class="chapter-num">06</span>
+    <p class="chapter-label">Chapter 06</p>
+    <h2 class="chapter-name">Quick Reference</h2>
+  </div>
+
+  <div class="page">
+    <div class="section-header fade-in" style="padding-left:0; padding-right:0;">
+      <p class="section-tag">Chapter 06</p>
+      <h2 class="section-title">Quick Reference</h2>
+      <p class="section-desc">Institutional and Academic details for the project.</p>
+    </div>
+
+    <h2 class="content-h2 fade-in">Institutional Data</h2>
+    <div class="table-wrapper fade-in">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Information Type</th>
+            <th>Details</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Institution</td>
+            <td>John Paul College</td>
+          </tr>
+          <tr>
+            <td>Location</td>
+            <td>MG Andaya, Odiong, Roxas, Oriental Mindoro</td>
+          </tr>
+          <tr>
+            <td>Department</td>
+            <td>College of Civil Engineering, Architecture, Technology and Sciences</td>
+          </tr>
+          <tr>
+            <td>Date</td>
+            <td>February 2026</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span class="page-num">CE308L-MANUAL · 2026</span>
+    <span class="page-course">BSCE · Civil Eng.</span>
+  </div>
+
+  <nav class="page-nav" id="pageNav">
+    <button class="nav-btn" id="prevBtn" onclick="navPage(-1)">
+      <span class="nav-arrow">‹</span> Prev
+    </button>
+    <div class="nav-indicator">
+      <span class="nav-page-label" id="navLabel">Cover</span>
+      <div class="nav-dots" id="navDots"></div>
+    </div>
+    <button class="nav-btn" id="nextBtn" onclick="navPage(1)">
+      Next <span class="nav-arrow">›</span>
+    </button>
+  </nav>
+  <div class="page-transition-overlay" id="pageOverlay"></div>
+
+  <script>
+    // ── PAGE SECTIONS ──
+    const pages = [
+      { id: 'cover', label: 'Cover' },
+      { id: 'toc', label: 'Contents' },
+      { id: 'ch1', label: 'Ch. 01' },
+      { id: 'ch2', label: 'Ch. 02' },
+      { id: 'ch3', label: 'Ch. 03' },
+      { id: 'ch4', label: 'Ch. 04' },
+      { id: 'ch5', label: 'Ch. 05' },
+      { id: 'ch6', label: 'Ch. 06' },
+    ];
+    let currentPage = 0;
+
+    // Build dots
+    const dotsEl = document.getElementById('navDots');
+    pages.forEach((_, i) => {
+      const d = document.createElement('span');
+      d.className = 'nav-dot' + (i === 0 ? ' active' : '');
+      d.onclick = () => goToPage(i);
+      dotsEl.appendChild(d);
+    });
+
+    function updateNav() {
+      document.getElementById('navLabel').textContent = pages[currentPage].label;
+      document.getElementById('prevBtn').disabled = currentPage === 0;
+      document.getElementById('nextBtn').disabled = currentPage === pages.length - 1;
+      dotsEl.querySelectorAll('.nav-dot').forEach((d, i) => {
+        d.classList.toggle('active', i === currentPage);
+      });
+    }
+
+    function goToPage(index) {
+      const overlay = document.getElementById('pageOverlay');
+      overlay.classList.add('active');
+      setTimeout(() => {
+        currentPage = Math.max(0, Math.min(pages.length - 1, index));
+        const el = document.getElementById(pages[currentPage].id);
+        if (el) {
+          const offset = el.getBoundingClientRect().top + window.scrollY - 58;
+          window.scrollTo({ top: offset, behavior: 'smooth' });
+        }
+        updateNav();
+        setTimeout(() => overlay.classList.remove('active'), 300);
+      }, 200);
+    }
+
+    function navPage(dir) { goToPage(currentPage + dir); }
+
+    // Detect current page on scroll
+    window.addEventListener('scroll', () => {
+      const doc = document.documentElement;
+      const scrolled = doc.scrollTop / (doc.scrollHeight - doc.clientHeight) * 100;
+      document.getElementById('progress-bar').style.width = Math.min(scrolled, 100) + '%';
+
+      // Find closest section
+      let best = 0;
+      pages.forEach((p, i) => {
+        const el = document.getElementById(p.id);
+        if (el) {
+          const top = el.getBoundingClientRect().top;
+          if (top <= 80) best = i;
+        }
+      });
+      if (best !== currentPage) {
+        currentPage = best;
+        updateNav();
+      }
+    }, { passive: true });
+
+    // Fade in on scroll
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // Quiz interaction
+    function selectOption(el, correct) {
+      const parent = el.closest('.quiz-card');
+      parent.querySelectorAll('.quiz-option').forEach(o => {
+        o.classList.remove('correct', 'wrong');
+        o.style.pointerEvents = 'none';
+      });
+      el.classList.add(correct ? 'correct' : 'wrong');
+      if (!correct) {
+        parent.querySelectorAll('.quiz-option').forEach(o => {
+          if (o.onclick && o.onclick.toString().includes('true')) {
+            o.classList.add('correct');
+          }
+        });
+      }
+    }
+
+    updateNav();
+  </script>
+</body>
+
+</html>
