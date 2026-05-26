@@ -4,2203 +4,2471 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Modular Tower Model Manual</title>
+  <title>Modular Tower Model Manual — CE308L</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Barlow:wght@300;400;500;700&family=Inter:wght@300;400;500;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap"
     rel="stylesheet">
-  <!-- Bootstrap 5 -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Tailwind -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            primary:   '#0B1D33',
-            primary2:  '#162D4A',
-            accent:    '#F5A623',
-            accent2:   '#4FC3F7',
-            steel:     '#2A4A6B',
-            concrete:  '#B0B8C1',
-          },
-          fontFamily: {
-            title: ['Rajdhani', 'sans-serif'],
-            mono:  ['Share Tech Mono', 'monospace'],
-            sans:  ['Barlow', 'sans-serif'],
-          },
-          backdropBlur: {
-            xs: '4px',
-          }
-        }
-      }
-    }
-  </script>
+
   <style>
     *,
     *::before,
     *::after {
       box-sizing: border-box;
       margin: 0;
-      padding: 0;
+      padding: 0
     }
 
     :root {
-      --primary: #0B1D33;
-      --primary2: #162D4A;
-      --accent: #F5A623;
-      --accent2: #4FC3F7;
-      --steel: #2A4A6B;
-      --concrete: #B0B8C1;
-      --surface: #EEF0F3;
-      --surface2: #DDE1E7;
-      --text: #0B1D33;
-      --text-muted: #5A6A7A;
-      --border: #C5CDD6;
-      --white: #FFFFFF;
-      --mono: 'Share Tech Mono', monospace;
-      --sans: 'Barlow', sans-serif;
-      --title: 'Rajdhani', sans-serif;
-      --radius: 10px;
-      --radius-sm: 5px;
-      --shadow: 0 4px 24px rgba(11, 29, 51, 0.13);
-      --shadow-lg: 0 8px 40px rgba(11, 29, 51, 0.2);
+      --ink: #0a0a0a;
+      --ink-2: #2d2d2d;
+      --ink-3: #6b6b6b;
+      --ink-4: #a8a8a8;
+      --paper: #fafaf7;
+      --paper-2: #f2f1ec;
+      --paper-3: #e8e5de;
+      --line: #e0ddd6;
+      --gold: #b8960a;
+      --gold-l: #d4ae2a;
+      --gold-bg: #fdf9e8;
+      --white: #ffffff;
+      --nav-h: 60px;
+      --sans: 'Inter', system-ui, sans-serif;
+      --display: 'Syne', sans-serif;
+      --mono: 'JetBrains Mono', monospace;
+
+      /* Enhanced Easing Curves */
+      --ease-out: cubic-bezier(0.25, 1, 0.5, 1);
+      --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+      --ease-bouncy: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+
+      --transition: 0.5s var(--ease-smooth);
+      --px: clamp(1.25rem, 5vw, 3.5rem);
     }
 
     html {
-      font-size: clamp(14px, 3.8vw, 16px);
+      font-size: 16px;
       scroll-behavior: smooth;
-    }
-
-    @keyframes gridPan {
-      from { background-position: 0 0 }
-      to { background-position: 40px 40px }
-    }
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(32px) }
-      to { opacity: 1; transform: none }
-    }
-    @keyframes slideLeft {
-      from { opacity: 0; transform: translateX(-28px) }
-      to { opacity: 1; transform: none }
-    }
-    @keyframes slideRight {
-      from { opacity: 0; transform: translateX(28px) }
-      to { opacity: 1; transform: none }
-    }
-    @keyframes scaleIn {
-      from { opacity: 0; transform: scale(0.9) }
-      to { opacity: 1; transform: scale(1) }
-    }
-    @keyframes shimmer {
-      0% { background-position: -600px 0 }
-      100% { background-position: 600px 0 }
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; box-shadow: 0 0 8px var(--accent); }
-      50% { opacity: 0.5; box-shadow: 0 0 20px var(--accent); }
-    }
-    @keyframes beamGrow {
-      from { width: 0 }
-      to { width: 100% }
-    }
-    @keyframes floatDot {
-      0%, 100% { transform: translateY(0) }
-      50% { transform: translateY(-6px) }
-    }
-    @keyframes glowPulse {
-      0%, 100% { box-shadow: 0 0 0 rgba(245,166,35,0); }
-      50% { box-shadow: 0 0 32px rgba(245,166,35,0.35); }
-    }
-    @keyframes orbitGlow {
-      0% { transform: rotate(0deg) translateX(120px) rotate(0deg); opacity:0.6; }
-      100% { transform: rotate(360deg) translateX(120px) rotate(-360deg); opacity:0.3; }
-    }
-    @keyframes fadeSlideIn {
-      from { opacity: 0; transform: translateY(20px) scale(0.97); }
-      to { opacity: 1; transform: none; }
-    }
-    @keyframes borderFlow {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-    @keyframes scanLine {
-      0% { top: 0; }
-      100% { top: 100%; }
     }
 
     body {
       font-family: var(--sans);
-      background: var(--surface);
-      color: var(--text);
-      min-height: 100vh;
-      width: 100%;
-      max-width: 100vw;
-      margin: 0 auto;
-      position: relative;
+      background: var(--paper);
+      color: var(--ink);
       overflow-x: hidden;
-      background-image:
-        linear-gradient(rgba(42, 74, 107, 0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(42, 74, 107, 0.05) 1px, transparent 1px);
-      background-size: 20px 20px;
-      transition: background 0.4s;
+      padding-bottom: calc(var(--nav-h) + 2rem);
     }
 
-    /* ── RESPONSIVE FLUID LAYOUT ── */
-    :root {
-      --px: clamp(1rem, 4vw, 1.5rem);
+    /* ── TYPOGRAPHY ── */
+    .t-mono {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase
     }
 
-    /* Page-turn transition overlay */
-    .page-transition-overlay {
-      position: fixed;
-      inset: 0;
-      background: linear-gradient(135deg, var(--primary), var(--accent) 80%);
-      z-index: 9999;
+    .t-display {
+      font-family: var(--display)
+    }
+
+    .t-gold {
+      color: var(--gold)
+    }
+
+    .t-muted {
+      color: var(--ink-3)
+    }
+
+    .t-light {
+      color: var(--ink-4)
+    }
+
+    /* ── PAGE SECTIONS (Scroll Reveals) ── */
+    .section {
       opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.35s cubic-bezier(.4,0,.2,1);
-    }
-    .page-transition-overlay.active {
-      opacity: 0.18;
-      pointer-events: all;
+      transform: translateY(40px) scale(0.98);
+      transition: opacity 0.9s var(--ease-smooth), transform 0.9s var(--ease-smooth);
+      will-change: opacity, transform;
     }
 
-    /* ── COVER PAGE ── */
+    .section.visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    /* ── COVER ── */
     .cover {
-      min-height: 100vh;
-      background: linear-gradient(155deg, #040D18 0%, #0B1D33 45%, #162D4A 100%);
-      display: flex;
-      flex-direction: column;
+      min-height: 100svh;
+      background: var(--ink);
+      color: var(--white);
+      display: grid;
+      grid-template-rows: auto 1fr auto;
       padding: 2rem var(--px);
       position: relative;
       overflow: hidden;
     }
 
-    .cover::before {
-      content: '';
+    .cover-bg {
       position: absolute;
       inset: 0;
-      background-image:
-        linear-gradient(rgba(79, 195, 247, 0.07) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(79, 195, 247, 0.07) 1px, transparent 1px);
-      background-size: 32px 32px;
-      animation: gridPan 10s linear infinite;
+      background:
+        radial-gradient(ellipse 60% 60% at 80% 50%, rgba(184, 150, 10, 0.08) 0%, transparent 70%),
+        repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.015) 0px, transparent 1px, transparent 80px, rgba(255, 255, 255, 0.015) 81px),
+        repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.015) 0px, transparent 1px, transparent 80px, rgba(255, 255, 255, 0.015) 81px);
+      pointer-events: none;
+      animation: pulseBg 10s infinite alternate linear;
     }
 
-    /* Glowing orb top-right */
-    .cover::after {
+    @keyframes pulseBg {
+      0% {
+        opacity: 0.8;
+        transform: scale(1);
+      }
+
+      100% {
+        opacity: 1;
+        transform: scale(1.02);
+      }
+    }
+
+    .cover-accent-ring {
+      position: absolute;
+      right: -80px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      border: 1px solid rgba(184, 150, 10, 0.15);
+      pointer-events: none;
+      animation: rotateRing 30s linear infinite;
+    }
+
+    .cover-accent-ring::before {
       content: '';
       position: absolute;
-      top: -80px;
-      right: -80px;
-      width: 320px;
-      height: 320px;
+      inset: 60px;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(245,166,35,0.13) 0%, transparent 70%);
-      animation: glowPulse 4s ease-in-out infinite;
+      border: 1px dashed rgba(184, 150, 10, 0.15);
+      animation: rotateRing 20s linear infinite reverse;
     }
 
-    /* Second orb bottom-left */
-    .cover-orb {
-      position: absolute;
-      bottom: -60px;
-      left: -60px;
-      width: 240px;
-      height: 240px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(79,195,247,0.1) 0%, transparent 70%);
-      animation: glowPulse 5s 1s ease-in-out infinite;
-      pointer-events: none;
+    @keyframes rotateRing {
+      0% {
+        transform: translateY(-50%) rotate(0deg);
+      }
+
+      100% {
+        transform: translateY(-50%) rotate(360deg);
+      }
     }
 
-    /* Scan line effect */
-    .cover-scan {
-      position: absolute;
-      left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, rgba(79,195,247,0.25), transparent);
-      animation: scanLine 6s linear infinite;
-      pointer-events: none;
-    }
-
-    .cover-beam {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 4px;
-      background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent));
-      background-size: 200% 100%;
-      animation: beamGrow 1.4s cubic-bezier(.4, 0, .2, 1) forwards, borderFlow 3s 1.5s linear infinite;
-      box-shadow: 0 0 16px rgba(245,166,35,0.6);
+    .cover-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 0.5rem;
+      position: relative;
+      z-index: 1;
+      opacity: 0;
+      animation: coverFadeIn 1s var(--ease-out) 0.5s both;
     }
 
     .cover-badge {
       font-family: var(--mono);
       font-size: 10px;
-      letter-spacing: 0.18em;
-      color: var(--accent);
+      letter-spacing: 0.14em;
       text-transform: uppercase;
-      border: 1px solid rgba(245, 166, 35, 0.5);
-      padding: 5px 12px;
-      border-radius: 3px;
-      display: inline-block;
-      width: fit-content;
-      position: relative;
-      z-index: 1;
-      animation: slideLeft 0.8s ease both;
-      clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+      color: rgba(255, 255, 255, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 5px 14px;
+      backdrop-filter: blur(4px);
     }
 
-    .cover-edition {
+    .cover-date {
       font-family: var(--mono);
-      font-size: 9px;
+      font-size: 10px;
       letter-spacing: 0.12em;
       color: rgba(255, 255, 255, 0.3);
-      text-transform: uppercase;
+    }
+
+    .cover-body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 3rem 0;
       position: relative;
       z-index: 1;
-      animation: slideLeft 0.8s 0.1s ease both;
+      max-width: 680px;
+    }
+
+    .cover-eyebrow {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold-l);
+      margin-bottom: 1.75rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      opacity: 0;
+      animation: coverSlideRight 0.8s var(--ease-out) 0.3s both;
+    }
+
+    .cover-eyebrow::before {
+      content: '';
+      width: 0px;
+      height: 1px;
+      background: var(--gold);
+      animation: expandLine 0.8s var(--ease-out) 0.7s both;
+    }
+
+    @keyframes expandLine {
+      to {
+        width: 28px;
+      }
     }
 
     .cover-title {
-      font-family: var(--title);
-      font-weight: 700;
-      font-size: clamp(2.4rem, 10vw, 3.8rem);
-      line-height: 1.0;
+      font-family: var(--display);
+      font-size: clamp(2.8rem, 9vw, 5.5rem);
+      line-height: 1.05;
       color: var(--white);
-      margin: 1.5rem 0 0.75rem;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      position: relative;
-      z-index: 1;
-      animation: slideUp 0.9s 0.2s ease both;
-    }
-
-    .cover-title span {
-      color: var(--accent);
-    }
-
-    .cover-subtitle {
-      font-size: 0.9rem;
-      color: rgba(255, 255, 255, 0.5);
-      line-height: 1.7;
-      font-weight: 300;
-      max-width: 280px;
-      position: relative;
-      z-index: 1;
-      animation: slideUp 0.9s 0.35s ease both;
-    }
-
-    .cover-divider {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin: 1.5rem 0;
-      position: relative;
-      z-index: 1;
-      animation: slideUp 0.9s 0.45s ease both;
-    }
-
-    .cover-divider::before,
-    .cover-divider::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: linear-gradient(90deg, var(--accent), transparent);
-    }
-
-    .cover-meta {
-      margin-top: auto;
-      padding-top: 1.5rem;
-      border-top: 1px solid rgba(79, 195, 247, 0.15);
-      position: relative;
-      z-index: 1;
-      animation: slideUp 0.9s 0.55s ease both;
-    }
-
-    .cover-meta-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      gap: 1rem;
-    }
-
-    .cover-label {
-      font-family: var(--mono);
-      font-size: 9px;
-      letter-spacing: 0.1em;
-      color: rgba(255, 255, 255, 0.3);
-      text-transform: uppercase;
-      margin-bottom: 3px;
-    }
-
-    .cover-value {
-      font-size: 0.85rem;
-      color: rgba(255, 255, 255, 0.85);
-      font-weight: 500;
-      font-family: var(--title);
-      letter-spacing: 0.05em;
-    }
-
-    .cover-logo {
-      font-family: var(--title);
+      margin-bottom: 0.5rem;
       font-weight: 700;
-      font-size: 1.1rem;
-      color: var(--accent2);
-      letter-spacing: 0.08em;
-      text-align: right;
-      line-height: 1.1;
+      animation: coverTitleIn 1s var(--ease-spring) 0.2s both;
     }
 
-    .chip-grid {
+    .cover-title-sub {
+      font-family: var(--display);
+      font-size: clamp(2.8rem, 9vw, 5.5rem);
+      line-height: 1.05;
+      font-style: italic;
+      font-weight: 400;
+      color: rgba(255, 255, 255, 0.35);
+      margin-bottom: 0.5rem;
+      animation: coverTitleIn 1s var(--ease-spring) 0.3s both;
+    }
+
+    .cover-title-end {
+      font-family: var(--display);
+      font-size: clamp(1.6rem, 5vw, 3rem);
+      line-height: 1.2;
+      color: rgba(255, 255, 255, 0.6);
+      font-weight: 400;
+      margin-bottom: 2.5rem;
+      animation: coverTitleIn 1s var(--ease-spring) 0.4s both;
+    }
+
+    @keyframes coverTitleIn {
+      from {
+        opacity: 0;
+        transform: translateY(40px) scale(0.97);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes coverSlideRight {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes coverFadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    .cover-rule {
+      width: 1px;
+      height: 0px;
+      background: var(--gold);
+      margin-bottom: 1.5rem;
+      opacity: 0.6;
+      animation: growRule 1s var(--ease-out) 0.8s both;
+    }
+
+    @keyframes growRule {
+      to {
+        height: 48px;
+      }
+    }
+
+    .cover-desc {
+      font-size: 0.92rem;
+      line-height: 1.8;
+      color: rgba(255, 255, 255, 0.5);
+      font-weight: 300;
+      max-width: 380px;
+      margin-bottom: 2rem;
+      animation: coverFadeIn 1s var(--ease-out) 1s both;
+    }
+
+    .cover-tags {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      margin: 1.25rem 0;
+      animation: coverFadeIn 1s var(--ease-out) 1.2s both;
+    }
+
+    .tag {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: rgba(255, 255, 255, 0.5);
+      transition: all var(--transition);
+      cursor: default;
+    }
+
+    .tag:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(184, 150, 10, 0.15);
+    }
+
+    .tag-gold {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: var(--ink)
+    }
+
+    .tag-gold:hover {
+      background: var(--gold-l);
+      border-color: var(--gold-l);
+      color: var(--ink)
+    }
+
+    .cover-footer {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
       position: relative;
       z-index: 1;
-      animation: slideUp 0.9s 0.4s ease both;
+      animation: coverFadeIn 1s var(--ease-out) 1.4s both;
     }
 
-    .chip {
+    .cover-meta-label {
       font-family: var(--mono);
-      font-size: 0.7rem;
-      padding: 5px 12px;
-      border-radius: 3px;
-      font-weight: 400;
-      letter-spacing: 0.06em;
-      clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+      font-size: 9px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.3);
+      margin-bottom: 5px
     }
 
-    .chip-primary {
-      background: rgba(245, 166, 35, 0.15);
-      color: var(--accent);
-      border: 1px solid rgba(245, 166, 35, 0.3);
-    }
-
-    .chip-teal {
-      background: rgba(79, 195, 247, 0.12);
-      color: var(--accent2);
-      border: 1px solid rgba(79, 195, 247, 0.25);
-    }
-
-    .chip-dark {
-      background: var(--steel);
-      color: var(--white);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+    .cover-meta-value {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.85)
     }
 
     /* ── TOPBAR ── */
     .topbar {
       position: sticky;
       top: 0;
-      z-index: 100;
-      background: rgba(11,29,51,0.85);
-      backdrop-filter: blur(16px) saturate(1.4);
-      -webkit-backdrop-filter: blur(16px) saturate(1.4);
-      border-bottom: 1.5px solid rgba(245,166,35,0.5);
-      padding: 0.7rem var(--px);
+      z-index: 90;
+      background: rgba(250, 250, 247, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid transparent;
+      padding: 0 var(--px);
+      height: 52px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      box-shadow: 0 4px 24px rgba(11,29,51,0.35), 0 1px 0 rgba(245,166,35,0.15);
-      transition: background 0.3s;
+      transition: all 0.4s var(--ease-out);
     }
 
-    .topbar-title {
-      font-family: var(--title);
-      font-size: 0.9rem;
-      font-weight: 700;
-      color: var(--white);
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      text-shadow: 0 0 12px rgba(245,166,35,0.3);
+    .topbar.scrolled {
+      background: rgba(250, 250, 247, 0.96);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
     }
 
-    .topbar-chapter {
-      font-size: 0.65rem;
-      color: rgba(176,184,193,0.8);
-      font-family: var(--mono);
-      letter-spacing: 0.08em;
-      transition: color 0.3s;
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 14px
     }
 
     .topbar-dot {
-      width: 9px;
-      height: 9px;
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
-      background: var(--accent);
-      animation: pulse 2.5s ease-in-out infinite;
+      background: var(--gold);
+      transition: transform 0.3s var(--ease-bouncy);
     }
 
-    /* ── PROGRESS BAR ── */
-    .progress-bar-wrap {
-      height: 3px;
-      background: rgba(42,74,107,0.5);
-      position: sticky;
-      top: 49px;
-      z-index: 99;
+    .topbar:hover .topbar-dot {
+      transform: scale(1.5);
     }
 
-    #progress-bar {
-      height: 100%;
-      background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent));
-      background-size: 200% 100%;
-      width: 0%;
-      transition: width 0.15s linear;
-      box-shadow: 0 0 10px rgba(245,166,35,0.7);
-      animation: borderFlow 2s linear infinite;
-    }
-
-    /* ── SECTION HEADER ── */
-    .section-header {
-      padding: 2rem var(--px) 1rem;
-    }
-
-    .section-tag {
+    .topbar-title {
       font-family: var(--mono);
-      font-size: 9px;
-      letter-spacing: 0.18em;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 6px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      color: var(--ink-2)
     }
 
-    .section-tag::before {
-      content: '//';
-      color: var(--accent2);
-    }
-
-    .section-title {
-      font-family: var(--title);
-      font-size: 1.7rem;
-      font-weight: 700;
-      color: var(--primary);
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      line-height: 1.15;
-    }
-
-    .section-desc {
-      font-size: 0.875rem;
-      color: var(--text-muted);
-      line-height: 1.65;
-      margin-top: 0.5rem;
-      font-weight: 300;
-    }
-
-    /* ── TOC ── */
-    .toc-list {
-      padding: 0 var(--px) 1.5rem;
-      list-style: none;
-    }
-
-    .toc-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 0.9rem 1rem;
-      margin-bottom: 8px;
-      background: var(--white);
-      border: 1px solid var(--border);
-      border-left: 3px solid var(--steel);
-      border-radius: var(--radius-sm);
-      text-decoration: none;
-      color: var(--text);
-      transition: all 0.3s cubic-bezier(.4, 0, .2, 1);
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 2px 12px rgba(11, 29, 51, 0.07);
-    }
-
-    .toc-item::before {
-      content: '';
-      position: absolute;
-      left: 0; top: 0; bottom: 0;
-      width: 3px;
-      background: linear-gradient(to bottom, var(--accent), var(--accent2));
-      transform: scaleY(0);
-      transform-origin: bottom;
-      transition: transform 0.3s cubic-bezier(.4, 0, .2, 1);
-    }
-
-    .toc-item::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(90deg, rgba(245,166,35,0.07), transparent 60%);
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-
-    .toc-item:hover {
-      background: rgba(238,240,243,0.9);
-      transform: translateX(6px);
-      box-shadow: 0 4px 20px rgba(11,29,51,0.13);
-      border-left-color: var(--accent);
-    }
-
-    .toc-item:hover::before { transform: scaleY(1); }
-    .toc-item:hover::after { opacity: 1; }
-
-    .toc-num {
+    .topbar-right {
       font-family: var(--mono);
-      font-size: 0.72rem;
-      color: var(--accent);
-      font-weight: 400;
-      min-width: 28px;
-      text-shadow: 0 0 8px rgba(245,166,35,0.4);
-    }
-
-    .toc-text { flex: 1; }
-
-    .toc-chapter {
-      font-family: var(--title);
-      font-weight: 600;
-      font-size: 0.95rem;
-      display: block;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-    }
-
-    .toc-sub {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      font-weight: 300;
-      font-family: var(--mono);
-    }
-
-    .toc-arrow {
-      color: var(--accent);
-      font-size: 1.1rem;
-      transition: transform 0.3s cubic-bezier(.4,0,.2,1), opacity 0.3s;
-      opacity: 0.6;
-    }
-
-    .toc-item:hover .toc-arrow {
-      transform: translateX(6px);
-      opacity: 1;
+      font-size: 10px;
+      color: var(--ink-4);
+      letter-spacing: 0.1em
     }
 
     /* ── CHAPTER BREAK ── */
     .chapter-break {
-      margin: 2rem 0 0;
-      padding: 2.5rem var(--px);
-      background: linear-gradient(135deg, #040D18 0%, var(--primary) 50%, var(--primary2) 100%);
-      color: var(--white);
-      position: relative;
+      padding: 4rem var(--px) 3rem;
+      background: var(--white);
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      margin-top: 2.5rem;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 1rem;
       overflow: hidden;
+      position: relative;
     }
 
     .chapter-break::before {
       content: '';
       position: absolute;
-      inset: 0;
-      background-image: linear-gradient(rgba(79,195,247,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(79,195,247,0.06) 1px, transparent 1px);
-      background-size: 24px 24px;
-      animation: gridPan 12s linear infinite;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: linear-gradient(180deg, var(--gold) 0%, transparent 100%);
+      transform: scaleY(0);
+      transform-origin: top;
+      transition: transform 1s var(--ease-out) 0.3s;
     }
 
-    .chapter-break::after {
-      content: '';
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent));
-      background-size: 200% 100%;
-      animation: borderFlow 3s linear infinite;
-    }
-
-    /* Glowing accent circle behind chapter number */
-    .chapter-break-glow {
-      position: absolute;
-      right: -20px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 160px;
-      height: 160px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(245,166,35,0.12) 0%, transparent 70%);
-      pointer-events: none;
+    .chapter-break.visible::before {
+      transform: scaleY(1);
     }
 
     .chapter-num {
-      font-family: var(--title);
-      font-size: 5.5rem;
-      font-weight: 700;
-      color: rgba(255,255,255,0.05);
-      line-height: 1;
-      position: absolute;
-      right: 1rem;
-      top: 50%;
-      transform: translateY(-50%);
-      letter-spacing: -0.04em;
-    }
-
-    .chapter-label {
       font-family: var(--mono);
-      font-size: 9px;
-      letter-spacing: 0.18em;
+      font-size: 10px;
+      letter-spacing: 0.2em;
       text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 8px;
-      position: relative;
-      z-index: 1;
-      text-shadow: 0 0 10px rgba(245,166,35,0.5);
+      color: var(--gold);
+      margin-bottom: 0.75rem
     }
 
     .chapter-name {
-      font-family: var(--title);
-      font-size: clamp(1.3rem, 5vw, 1.8rem);
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
+      font-family: var(--display);
+      font-size: clamp(1.8rem, 5vw, 3rem);
+      color: var(--ink);
       line-height: 1.1;
-      max-width: 65%;
-      position: relative;
-      z-index: 1;
-      text-shadow: 0 2px 16px rgba(11,29,51,0.5);
+      font-weight: 700
     }
 
-    /* ── PAGES ── */
-    .page {
-      padding: 0 var(--px) 2rem;
-    }
-
-    /* ── CALLOUTS ── */
-    .callout {
-      border-radius: var(--radius-sm);
-      padding: 1rem 1.125rem;
-      margin: 1.25rem 0;
-      border-left: 4px solid;
-      position: relative;
-      overflow: hidden;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-    .callout:hover {
-      transform: translateX(3px);
-      box-shadow: var(--shadow);
-    }
-
-    .callout::before {
-      content: '';
-      position: absolute;
-      right: -20px;
-      top: -20px;
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      opacity: 0.08;
-    }
-
-    .callout-note {
-      background: #E8F4FD;
-      border-color: #2196F3;
-    }
-
-    .callout-note::before {
-      background: #2196F3;
-    }
-
-    .callout-warn {
-      background: #FFF8E1;
-      border-color: #FFC107;
-    }
-
-    .callout-warn::before {
-      background: #FFC107;
-    }
-
-    .callout-danger {
-      background: #FFEBEE;
-      border-color: #F44336;
-    }
-
-    .callout-danger::before {
-      background: #F44336;
-    }
-
-    .callout-tip {
-      background: #E8F5E9;
-      border-color: #4CAF50;
-    }
-
-    .callout-tip::before {
-      background: #4CAF50;
-    }
-
-    .callout-tag {
-      font-family: var(--mono);
-      font-size: 9px;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      font-weight: 400;
-      margin-bottom: 4px;
-      display: block;
-    }
-
-    .callout-note .callout-tag {
-      color: #1565C0;
-    }
-
-    .callout-warn .callout-tag {
-      color: #F57F17;
-    }
-
-    .callout-danger .callout-tag {
-      color: #B71C1C;
-    }
-
-    .callout-tip .callout-tag {
-      color: #2E7D32;
-    }
-
-    .callout p {
-      font-size: 0.85rem;
-      line-height: 1.6;
-      margin: 0;
-    }
-
-    .callout-note p {
-      color: #1A3A5C;
-    }
-
-    .callout-warn p {
-      color: #5D3A00;
-    }
-
-    .callout-danger p {
-      color: #7F1D1D;
-    }
-
-    .callout-tip p {
-      color: #1B5E20;
-    }
-
-    /* ── DEFINITION ── */
-    .definition {
-      background: linear-gradient(135deg, var(--primary) 0%, var(--primary2) 100%);
-      color: var(--white);
-      border-radius: var(--radius-sm);
-      padding: 1.25rem;
-      margin: 1.25rem 0;
-      border-left: 4px solid var(--accent);
-      position: relative;
-      overflow: hidden;
-      transition: transform 0.25s, box-shadow 0.25s;
-    }
-
-    .definition::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image: linear-gradient(rgba(79, 195, 247, 0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(79, 195, 247, 0.04) 1px, transparent 1px);
-      background-size: 16px 16px;
-    }
-
-    .definition:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-lg);
-    }
-
-    .definition-term {
-      font-family: var(--title);
-      font-size: 0.95rem;
-      color: var(--accent);
-      margin-bottom: 0.5rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      position: relative;
-      z-index: 1;
-    }
-
-    .definition p {
-      font-size: 0.875rem;
-      line-height: 1.65;
-      color: rgba(255, 255, 255, 0.75);
-      font-weight: 300;
-      position: relative;
-      z-index: 1;
-    }
-
-    /* ── FORMULA / HIGHLIGHT BLOCK ── */
-    .formula-block {
-      background: var(--white);
-      border: 1px solid var(--border);
-      border-top: 3px solid var(--accent2);
-      border-radius: var(--radius-sm);
-      padding: 1.25rem;
-      margin: 1.25rem 0;
-      overflow-x: auto;
-      transition: transform 0.2s, box-shadow 0.2s;
-      box-shadow: 0 2px 8px rgba(11, 29, 51, 0.07);
-    }
-
-    .formula-block:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow);
-    }
-
-    .formula-label {
-      font-family: var(--mono);
-      font-size: 9px;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--accent2);
-      margin-bottom: 0.75rem;
-      display: block;
-    }
-
-    .formula {
-      font-family: var(--mono);
-      font-size: 1.1rem;
-      color: var(--primary);
-      font-weight: 400;
-      letter-spacing: 0.04em;
-      display: block;
-      background: var(--surface);
-      padding: 0.6rem 0.8rem;
-      border-radius: var(--radius-sm);
-      border-left: 3px solid var(--accent);
-    }
-
-    .formula-desc {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-top: 0.6rem;
-      font-weight: 300;
-      line-height: 1.55;
-    }
-
-    /* ── STEPS ── */
-    .steps {
-      list-style: none;
-      padding: 0;
-      margin: 1.25rem 0;
-    }
-
-    .step {
-      display: flex;
-      gap: 14px;
-      padding-bottom: 1.25rem;
-      position: relative;
-    }
-
-    .step:not(:last-child)::after {
-      content: '';
-      position: absolute;
-      left: 14px;
-      top: 32px;
-      bottom: 0;
-      width: 1px;
-      background: linear-gradient(to bottom, var(--accent), transparent);
-    }
-
-    .step-num {
-      width: 28px;
-      height: 28px;
-      border-radius: 3px;
-      background: linear-gradient(135deg, var(--accent), #E8920C);
-      color: var(--primary);
-      font-family: var(--mono);
-      font-size: 0.72rem;
-      font-weight: 400;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .chapter-index {
+      font-family: var(--display);
+      font-size: 6rem;
+      color: var(--paper-3);
+      line-height: 1;
+      font-style: italic;
       flex-shrink: 0;
-      z-index: 1;
-      box-shadow: 0 2px 8px rgba(245, 166, 35, 0.35);
-      clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+      font-weight: 800;
+      user-select: none;
+      transition: transform 1s var(--ease-out);
     }
 
-    .step-body {
-      flex: 1;
-      padding-top: 4px;
+    .chapter-break:hover .chapter-index {
+      transform: scale(1.05) rotate(2deg);
+      color: var(--line);
     }
 
-    .step-title {
-      font-family: var(--title);
-      font-weight: 700;
-      font-size: 0.95rem;
-      margin-bottom: 4px;
-      color: var(--primary);
-      letter-spacing: 0.04em;
+    /* ── PAGE CONTENT ── */
+    .page {
+      padding: 3rem var(--px) 2.5rem;
+      background: var(--paper)
+    }
+
+    .section-label {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.2em;
       text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1rem
     }
 
-    .step-desc {
-      font-size: 0.82rem;
-      color: var(--text-muted);
-      line-height: 1.6;
+    .body-text {
+      font-size: 0.95rem;
+      line-height: 1.85;
+      color: var(--ink-2);
       font-weight: 300;
+      max-width: 640px
     }
 
     /* ── TEAM GRID ── */
     .team-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-      gap: 12px;
-      margin: 1.25rem 0;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1px;
+      background: var(--line);
+      border: 1px solid var(--line);
+      margin: 1.5rem 0;
     }
 
     .team-card {
       background: var(--white);
-      border: 1px solid var(--border);
-      border-top: 3px solid var(--accent);
-      border-radius: var(--radius-sm);
-      padding: 1rem 0.5rem;
+      padding: 1.75rem 1rem 1.25rem;
       text-align: center;
-      box-shadow: 0 2px 12px rgba(11,29,51,0.08);
-      transition: transform 0.3s cubic-bezier(.4,0,.2,1), box-shadow 0.3s, border-color 0.3s;
+      transition: all var(--transition);
+      cursor: default;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100%;
       position: relative;
-      overflow: hidden;
-    }
-
-    .team-card::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(245,166,35,0.04) 0%, transparent 60%);
-      opacity: 0;
-      transition: opacity 0.3s;
     }
 
     .team-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 28px rgba(11,29,51,0.16);
-      border-top-color: var(--accent2);
+      background: var(--white);
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.05);
+      z-index: 2;
     }
 
-    .team-card:hover::before { opacity: 1; }
+    .team-photo-wrap {
+      width: 68px;
+      height: 68px;
+      margin: 0 auto 1.1rem;
+      flex-shrink: 0;
+      border-radius: 50%;
+      transition: transform var(--transition);
+    }
+
+    .team-card:hover .team-photo-wrap {
+      transform: scale(1.1);
+    }
 
     .team-img {
-      width: 64px;
-      height: 64px;
+      width: 68px;
+      height: 68px;
       border-radius: 50%;
-      background: var(--surface2);
-      margin: 0 auto 0.75rem;
       display: block;
       object-fit: cover;
-      border: 2px solid rgba(245,166,35,0.3);
-      box-shadow: 0 0 0 3px rgba(245,166,35,0.1), 0 2px 10px rgba(11,29,51,0.12);
-      transition: box-shadow 0.3s, border-color 0.3s;
+      border: 2px solid var(--line);
+      transition: border-color var(--transition);
     }
 
     .team-card:hover .team-img {
-      box-shadow: 0 0 0 4px rgba(79,195,247,0.25), 0 4px 16px rgba(11,29,51,0.18);
-      border-color: var(--accent2);
+      border-color: var(--gold);
     }
 
     .team-name {
-      font-family: var(--title);
       font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--primary);
-      line-height: 1.2;
-      margin-bottom: 0.25rem;
-      letter-spacing: 0.02em;
+      font-weight: 500;
+      color: var(--ink);
+      line-height: 1.4;
+      margin-bottom: 4px;
     }
 
     .team-role {
       font-family: var(--mono);
-      font-size: 0.62rem;
-      color: var(--text-muted);
+      font-size: 9px;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
-      letter-spacing: 0.07em;
+      color: var(--ink-4);
+      line-height: 1.5;
+      margin-top: auto;
     }
 
-    /* ── TABLE ── */
-    .table-wrapper {
-      margin: 1.25rem 0;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
+    /* ── COMPONENTS GRID ── */
+    .components-section {
+      background: var(--paper);
+      padding: 0 var(--px) 2.5rem
+    }
+
+    .components-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      padding: 2.5rem 0 1.75rem;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 2px;
+    }
+
+    .components-header h2 {
+      font-family: var(--display);
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--ink)
+    }
+
+    .components-header span {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--ink-4);
+      letter-spacing: 0.1em
+    }
+
+    .components-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      gap: 1px;
+      background: var(--line);
+      border: 1px solid var(--line);
+    }
+
+    .comp-card {
+      background: var(--white);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1.25rem 0.75rem 0.75rem;
+      cursor: pointer;
+      position: relative;
+      transition: all var(--transition);
       overflow: hidden;
-      box-shadow: 0 2px 8px rgba(11, 29, 51, 0.07);
     }
 
-    .data-table {
+    .comp-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--gold);
+      transform: scaleX(0);
+      transform-origin: center;
+      transition: transform 0.4s var(--ease-spring);
+    }
+
+    .comp-card:hover {
+      background: var(--gold-bg);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(184, 150, 10, 0.08);
+      z-index: 2;
+    }
+
+    .comp-card:hover::after {
+      transform: scaleX(1)
+    }
+
+    .comp-card img {
+      width: 70px;
+      height: 70px;
+      object-fit: contain;
+      transition: transform 0.6s var(--ease-bouncy), filter 0.3s;
+      filter: grayscale(20%);
+    }
+
+    .comp-card:hover img {
+      transform: scale(1.2) translateY(-4px);
+      filter: grayscale(0%)
+    }
+
+    .comp-qty {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      color: var(--ink-3);
+      margin-top: 1rem;
+      padding-top: 0.6rem;
+      border-top: 1px solid var(--line);
       width: 100%;
-      border-collapse: collapse;
-      font-size: 0.82rem;
+      text-align: center;
+      transition: color 0.3s, border-color 0.3s;
     }
 
-    .data-table thead {
-      background: linear-gradient(90deg, var(--primary), var(--primary2));
+    .comp-card:hover .comp-qty {
+      color: var(--gold);
+      border-color: rgba(184, 150, 10, 0.3);
+    }
+
+    /* ── PHASE SECTION ── */
+    .phase-section {
+      background: var(--paper);
+      padding: 0 var(--px) 3rem
+    }
+
+    .phase-header {
+      padding: 2.5rem 0 2rem;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 1.5px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    .phase-header h2 {
+      font-family: var(--display);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 0.75rem
+    }
+
+    .phase-header p {
+      font-size: 0.88rem;
+      line-height: 1.8;
+      color: var(--ink-2);
+      font-weight: 300;
+      max-width: 520px
+    }
+
+    .phase-header strong {
+      font-weight: 500;
+      color: var(--ink)
+    }
+
+    .phase-badge {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      white-space: nowrap;
+      height: fit-content;
+      margin-top: 4px;
+      transition: all var(--transition);
+    }
+
+    .phase-section:hover .phase-badge {
+      background: var(--gold);
       color: var(--white);
     }
 
-    .data-table th {
-      padding: 0.7rem 0.875rem;
-      font-family: var(--mono);
-      font-size: 0.68rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      font-weight: 400;
-      text-align: left;
+    /* ── STEP GRID ── */
+    .step-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--line);
+      border: 1px solid var(--line);
+      margin-bottom: 1px;
     }
 
-    .data-table td {
-      padding: 0.65rem 0.875rem;
-      border-top: 1px solid var(--border);
-      color: var(--text);
-      line-height: 1.5;
-      transition: background 0.15s;
-    }
-
-    .data-table tr:hover td {
-      background: rgba(245, 166, 35, 0.06);
-    }
-
-    .data-table tr:nth-child(even) td {
-      background: var(--surface2);
-    }
-
-    .data-table tr:nth-child(even):hover td {
-      background: rgba(245, 166, 35, 0.08);
-    }
-
-    /* ── FIGURE ── */
-    .figure {
-      margin: 1.25rem 0;
-      border-radius: var(--radius-sm);
+    /* ── INSPECTABLE IMAGE ── */
+    .inspectable {
+      position: relative;
       overflow: hidden;
-      border: 1px solid var(--border);
-      box-shadow: 0 2px 8px rgba(11, 29, 51, 0.07);
-      transition: transform 0.25s, box-shadow 0.25s;
+      cursor: pointer;
+      background: var(--paper-2);
     }
 
-    .figure:hover {
-      transform: translateY(-3px);
-      box-shadow: var(--shadow-lg);
+    .step-img {
+      aspect-ratio: 1/1
     }
 
-    .figure-img {
-      background: linear-gradient(135deg, var(--surface2) 0%, var(--surface) 100%);
-      height: 180px;
+    .result-img {
+      aspect-ratio: 16/9;
+      border: 1px solid var(--line)
+    }
+
+    .wide-img {
+      aspect-ratio: 21/9;
+      border: 1px solid var(--line)
+    }
+
+    .inspectable img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transform-origin: center;
+      transition: transform 0.8s var(--ease-smooth), filter 0.4s;
+    }
+
+    .inspectable:hover img {
+      transform: scale(1.08) rotate(-1deg);
+      filter: brightness(0.9);
+    }
+
+    .img-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(10, 10, 10, 0.2);
+      backdrop-filter: blur(2px);
+      -webkit-backdrop-filter: blur(2px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      opacity: 0;
+      transition: opacity 0.4s var(--ease-out);
+    }
+
+    .inspectable:hover .img-overlay {
+      opacity: 1
+    }
+
+    .overlay-btn {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.5);
       display: flex;
       align-items: center;
       justify-content: center;
-      flex-direction: column;
-      gap: 8px;
+      transform: translateY(20px) scale(0.8);
+      transition: all 0.5s var(--ease-bouncy);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .inspectable:hover .overlay-btn {
+      transform: translateY(0) scale(1);
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    .overlay-btn svg {
+      width: 20px;
+      height: 20px;
+      stroke: #fff;
+      stroke-width: 1.5;
+      fill: none
+    }
+
+    .overlay-label {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.9);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.4s var(--ease-out) 0.1s;
+    }
+
+    .inspectable:hover .overlay-label {
+      opacity: 1;
+      transform: translateY(0)
+    }
+
+    /* ── SUMMARY PAGE ── */
+    .summary-section {
+      background: var(--white);
+      padding-bottom: 3rem
+    }
+
+    .summary-header {
+      background: var(--ink);
+      color: var(--white);
+      padding: 2.5rem var(--px);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 2rem;
+      align-items: start;
       position: relative;
       overflow: hidden;
     }
 
-    .figure-img::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image: linear-gradient(rgba(42, 74, 107, 0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(42, 74, 107, 0.07) 1px, transparent 1px);
-      background-size: 20px 20px;
-    }
-
-    .figure-icon {
-      font-size: 2.5rem;
-      opacity: 0.25;
-      position: relative;
-      z-index: 1;
-    }
-
-    .figure-placeholder-text {
+    .summary-header-eyebrow {
       font-family: var(--mono);
-      font-size: 0.7rem;
-      color: var(--text-muted);
-      letter-spacing: 0.1em;
+      font-size: 9px;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
-      position: relative;
-      z-index: 1;
+      color: rgba(255, 255, 255, 0.4);
+      margin-bottom: 0.75rem
     }
 
-    .figure-caption {
-      padding: 0.625rem 0.875rem;
-      background: var(--white);
-      border-top: 1px solid var(--border);
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      font-weight: 300;
-    }
-
-    .figure-caption strong {
-      color: var(--primary);
+    .summary-header-title {
+      font-family: var(--display);
+      font-size: clamp(1.5rem, 4vw, 2.2rem);
       font-weight: 700;
-      font-family: var(--title);
+      color: var(--white);
+      margin-bottom: 1rem;
+      line-height: 1.1
     }
 
-    /* ── BODY TEXT ── */
-    .body-text {
+    .summary-header-desc {
+      font-size: 0.85rem;
+      line-height: 1.75;
+      color: rgba(255, 255, 255, 0.6);
+      font-weight: 300;
+      max-width: 480px
+    }
+
+    .summary-header-desc ul {
+      padding-left: 1.1rem;
+      margin-top: 0.5rem
+    }
+
+    .summary-thumb {
+      width: 100px;
+      height: 100px;
+      flex-shrink: 0;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      overflow: hidden;
+      cursor: pointer;
+      position: relative;
+      transition: all var(--transition);
+    }
+
+    .summary-thumb:hover {
+      border-color: var(--gold);
+      transform: scale(1.1) rotate(2deg);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      z-index: 2;
+    }
+
+    .summary-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.6s var(--ease-smooth);
+    }
+
+    .summary-thumb:hover img {
+      transform: scale(1.15)
+    }
+
+    .summary-layers {
+      padding: 2rem var(--px);
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem
+    }
+
+    .layer-row {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      cursor: pointer;
+      transition: transform var(--transition);
+    }
+
+    .layer-row:hover {
+      transform: translateX(10px);
+    }
+
+    .layer-img {
+      flex: 1;
+      aspect-ratio: 4/3;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      position: relative;
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+
+    .layer-row:hover .layer-img {
+      border-color: var(--gold);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    }
+
+    .layer-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.8s var(--ease-smooth);
+    }
+
+    .layer-row:hover .layer-img img {
+      transform: scale(1.05)
+    }
+
+    .layer-badge {
+      background: var(--ink);
+      color: var(--white);
+      font-family: var(--display);
+      font-size: clamp(1rem, 2vw, 1.3rem);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 0.6rem 1.25rem;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: all var(--transition);
+    }
+
+    .layer-row:hover .layer-badge {
+      background: var(--gold);
+      color: var(--ink);
+      transform: scale(1.05);
+    }
+
+    /* ── PHASE 2 ── */
+    .p2-section {
+      background: var(--white);
+      padding-bottom: 3rem
+    }
+
+    .p2-title-bar {
+      margin: 0 var(--px);
+      margin-top: 1.5rem;
+      background: var(--gold-bg);
+      border: 1px solid rgba(184, 150, 10, 0.3);
+      padding: 1.25rem 1.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+
+    .p2-title-bar:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(184, 150, 10, 0.1);
+    }
+
+    .p2-title-bar h2 {
+      font-family: var(--display);
+      font-size: clamp(1.4rem, 3.5vw, 2rem);
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--ink);
+      letter-spacing: 0.03em
+    }
+
+    .p2-title-bar span {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    .p2-title-bar span::before {
+      content: '';
+      width: 20px;
+      height: 1px;
+      background: var(--gold)
+    }
+
+    .p2-desc {
+      margin: 1.25rem var(--px);
+      border-left: 2px solid var(--gold);
+      padding: 0.75rem 1.25rem;
+      font-size: 0.88rem;
+      line-height: 1.8;
+      color: var(--ink-2);
+      font-weight: 300;
+      background: var(--paper);
+      transition: background var(--transition);
+    }
+
+    .p2-desc:hover {
+      background: var(--gold-bg);
+    }
+
+    .p2-thumbs {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin: 0 var(--px) 1.5rem;
+    }
+
+    .p2-thumb {
+      position: relative;
+      aspect-ratio: 1/1;
+      background: var(--paper-2);
+      border: 1px solid var(--line);
+      cursor: pointer;
+      overflow: hidden;
+      transition: all var(--transition);
+    }
+
+    .p2-thumb:hover {
+      border-color: var(--gold);
+      transform: translateY(-4px) scale(1.05);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      z-index: 2;
+    }
+
+    .p2-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.6s var(--ease-smooth);
+    }
+
+    .p2-thumb:hover img {
+      transform: scale(1.15);
+    }
+
+    .p2-thumb .p2-thumb-num {
+      position: absolute;
+      bottom: 4px;
+      right: 6px;
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      color: var(--ink-4);
+      transition: color 0.3s;
+    }
+
+    .p2-thumb:hover .p2-thumb-num {
+      color: var(--gold);
+      font-weight: bold;
+    }
+
+    .p2-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin: 0 var(--px);
+      align-items: start
+    }
+
+    .p2-main-img {
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      border: 1px solid var(--line);
+      aspect-ratio: 3/4;
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+
+    .p2-main-img:hover {
+      border-color: var(--gold);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    .p2-main-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.8s var(--ease-smooth);
+    }
+
+    .p2-main-img:hover img {
+      transform: scale(1.06)
+    }
+
+    .p2-main-img .img-overlay {
+      background: rgba(10, 10, 10, 0.25);
+      backdrop-filter: blur(3px);
+    }
+
+    .p2-instructions {
+      border: 1px solid var(--line);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      position: sticky;
+      top: 64px;
+      background: var(--white);
+    }
+
+    .p2-step {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      transition: transform var(--transition);
+    }
+
+    .p2-step:hover {
+      transform: translateX(8px);
+    }
+
+    .p2-step-num {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--ink);
+      color: var(--white);
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+      transition: background var(--transition), transform var(--transition);
+    }
+
+    .p2-step:hover .p2-step-num {
+      background: var(--gold);
+      transform: scale(1.1) rotate(10deg);
+    }
+
+    .p2-step p {
+      font-size: 0.86rem;
+      line-height: 1.75;
+      color: var(--ink-2);
+      font-weight: 300
+    }
+
+    .p2-step strong {
+      font-weight: 500;
+      color: var(--ink)
+    }
+
+    /* ── PHASE 3 ── */
+    .p3-section {
+      background: var(--white);
+      padding-bottom: 3rem
+    }
+
+    .p3-header {
+      background: var(--ink-2);
+      color: var(--white);
+      margin: 1.5rem var(--px) 0;
+      padding: 1.25rem 1.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background var(--transition);
+    }
+
+    .p3-header:hover {
+      background: var(--ink);
+    }
+
+    .p3-header h2 {
+      font-family: var(--display);
+      font-size: clamp(1.4rem, 3.5vw, 2rem);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em
+    }
+
+    .p3-phase-badge {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: rgba(255, 255, 255, 0.6)
+    }
+
+    .p3-top {
+      display: grid;
+      grid-template-columns: 3fr 1fr;
+      gap: 1.75rem;
+      margin: 1.5rem var(--px) 2rem;
+      align-items: start;
+    }
+
+    .p3-desc {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      padding: 1.5rem;
+      font-size: 0.9rem;
+      line-height: 1.75;
+      color: var(--ink-2);
+      transition: box-shadow var(--transition);
+    }
+
+    .p3-desc:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    }
+
+    .p3-desc ul {
+      margin-top: 0.75rem;
+      padding-left: 1.1rem
+    }
+
+    .p3-desc li {
+      margin-bottom: 0.5rem
+    }
+
+    .p3-desc strong {
+      font-weight: 500;
+      color: var(--ink)
+    }
+
+    .p3-thumb {
+      border: 1px solid var(--line);
+      overflow: hidden;
+      aspect-ratio: 3/4;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .p3-thumb:hover {
+      border-color: var(--gold);
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(184, 150, 10, 0.15);
+    }
+
+    .p3-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: var(--paper-2);
+      display: block;
+      transition: transform 0.6s var(--ease-bouncy);
+    }
+
+    .p3-thumb:hover img {
+      transform: scale(1.1)
+    }
+
+    .p3-steps {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin: 0 var(--px)
+    }
+
+    .p3-step-col {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      align-items: center
+    }
+
+    .p3-step-col img {
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      border: 1px solid var(--line);
+      transition: all var(--transition);
+    }
+
+    .p3-step-col img:hover {
+      border-color: var(--gold);
+      transform: scale(1.02);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+    }
+
+    /* ── FINAL OUTCOME ── */
+    .final-section {
+      background: var(--white);
+      padding-bottom: 4rem
+    }
+
+    .final-header {
+      margin: 1.5rem var(--px) 0;
+      background: var(--ink);
+      color: var(--white);
+      padding: 1.5rem 1.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .final-header h2 {
+      font-family: var(--display);
+      font-size: clamp(1.4rem, 3.5vw, 2rem);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em
+    }
+
+    .final-complete-badge {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      background: var(--gold);
+      color: var(--ink);
+      font-weight: 500;
+      animation: pulseGold 2s infinite alternate ease-in-out;
+    }
+
+    @keyframes pulseGold {
+      from {
+        box-shadow: 0 0 0 0 rgba(184, 150, 10, 0.4);
+      }
+
+      to {
+        box-shadow: 0 0 0 10px rgba(184, 150, 10, 0);
+      }
+    }
+
+    .final-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin: 1.75rem var(--px) 0;
+      align-items: start
+    }
+
+    .final-desc {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      padding: 1.5rem;
       font-size: 0.9rem;
       line-height: 1.8;
-      color: var(--text);
-      font-weight: 300;
-      margin: 1rem 0;
+      color: var(--ink-2);
+      border-left: 3px solid var(--gold);
+      transition: all var(--transition);
     }
 
-    .body-text strong {
-      font-weight: 700;
-      color: var(--primary);
-      font-family: var(--title);
-      letter-spacing: 0.03em;
-    }
-
-    h2.content-h2 {
-      font-family: var(--title);
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: var(--primary);
-      margin: 2rem 0 0.5rem;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    h2.content-h2::before {
-      content: '■';
-      color: var(--accent);
-      font-size: 0.6rem;
-      flex-shrink: 0;
-    }
-
-    h2.content-h2::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: linear-gradient(90deg, var(--border), transparent);
-    }
-
-    h3.content-h3 {
-      font-family: var(--title);
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: var(--steel);
-      margin: 1.5rem 0 0.4rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    h3.content-h3::before {
-      content: '//';
-      font-family: var(--mono);
-      color: var(--accent2);
-      font-size: 0.75rem;
-      font-weight: 400;
-    }
-
-    /* ── QUIZ ── */
-    .quiz-card {
+    .final-desc:hover {
       background: var(--white);
-      border: 1px solid var(--border);
-      border-top: 3px solid var(--accent);
-      border-radius: var(--radius-sm);
-      padding: 1.25rem;
-      margin: 1.25rem 0;
-      box-shadow: 0 2px 8px rgba(11, 29, 51, 0.07);
+      border-left-width: 6px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
     }
 
-    .quiz-q {
-      font-family: var(--title);
-      font-size: 0.95rem;
-      font-weight: 600;
-      margin-bottom: 1rem;
-      line-height: 1.5;
-      letter-spacing: 0.03em;
-      text-transform: uppercase;
-      color: var(--primary);
-    }
-
-    .quiz-option {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      padding: 0.625rem 0.75rem;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      margin-bottom: 6px;
-      font-size: 0.83rem;
+    .final-img-box {
+      border: 1px solid var(--line);
+      overflow: hidden;
       cursor: pointer;
-      transition: all 0.18s cubic-bezier(.4, 0, .2, 1);
+      position: relative;
+      transition: all var(--transition);
     }
 
-    .quiz-option:hover {
-      background: var(--surface2);
-      border-color: var(--steel);
-      transform: translateX(4px);
+    .final-img-box:hover {
+      border-color: var(--gold);
+      box-shadow: 0 12px 32px rgba(184, 150, 10, 0.15);
+      transform: translateY(-4px);
     }
 
-    .quiz-option.correct {
-      border-color: #4CAF50;
-      background: #E8F5E9;
-      color: #1B5E20;
+    .final-img-box img {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: transform 0.8s var(--ease-smooth)
     }
 
-    .quiz-option.wrong {
-      border-color: #F44336;
-      background: #FFEBEE;
-      color: #7F1D1D;
+    .final-img-box:hover img {
+      transform: scale(1.05)
     }
 
-    .quiz-letter {
-      font-family: var(--mono);
-      font-size: 0.7rem;
-      font-weight: 400;
-      min-width: 18px;
-      color: var(--accent);
-      margin-top: 1px;
+    .final-img-box .img-overlay {
+      background: rgba(10, 10, 10, 0.2);
+      backdrop-filter: blur(4px);
     }
 
     /* ── FOOTER ── */
     .page-footer {
-      padding: 1.5rem 1.25rem;
-      border-top: 2px solid var(--accent);
+      padding: 1.75rem var(--px);
+      background: var(--white);
+      border-top: 1px solid var(--line);
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      margin-top: 2rem;
-      background: var(--primary);
-      border-radius: 0;
+      align-items: center;
     }
 
-    .page-num {
+    .footer-text {
       font-family: var(--mono);
-      font-size: 0.7rem;
-      color: var(--concrete);
-      letter-spacing: 0.1em;
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-4)
     }
 
-    .page-course {
-      font-size: 0.7rem;
-      color: var(--concrete);
-      font-weight: 300;
-      font-family: var(--mono);
+    .footer-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--gold)
     }
 
-    /* ── SCROLL ANIMATIONS ── */
-    .fade-in {
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 0.6s cubic-bezier(.4, 0, .2, 1), transform 0.6s cubic-bezier(.4, 0, .2, 1);
-    }
-
-    .fade-in.visible {
-      opacity: 1;
-      transform: none;
-    }
-
-    .fade-in:nth-child(2) { transition-delay: 0.09s; }
-    .fade-in:nth-child(3) { transition-delay: 0.18s; }
-    .fade-in:nth-child(4) { transition-delay: 0.27s; }
-    .fade-in:nth-child(5) { transition-delay: 0.36s; }
-    .fade-in:nth-child(6) { transition-delay: 0.45s; }
-
-    /* ── PAGE NAV BAR ── */
-    body { padding-bottom: 72px; }
-
-    .page-nav {
+    /* ── BOTTOM NAV ── */
+    .bottom-nav {
       position: fixed;
       bottom: 0;
       left: 0;
       right: 0;
-      width: 100%;
-      background: rgba(11,29,51,0.92);
-      backdrop-filter: blur(20px) saturate(1.4);
-      -webkit-backdrop-filter: blur(20px) saturate(1.4);
-      border-top: 1.5px solid rgba(245,166,35,0.4);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0.6rem var(--px);
       z-index: 200;
-      box-shadow: 0 -4px 28px rgba(11,29,51,0.4), 0 -1px 0 rgba(245,166,35,0.1);
+      background: rgba(250, 250, 247, 0.90);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-top: 1px solid var(--line);
+      height: var(--nav-h);
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      padding: 0 var(--px);
+      gap: 1rem;
+      transition: transform 0.4s var(--ease-out);
     }
 
     .nav-btn {
+      background: none;
+      border: 1px solid var(--line);
+      color: var(--ink-2);
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 8px 20px;
+      cursor: pointer;
+      transition: all 0.3s var(--ease-out);
+      white-space: nowrap;
       display: flex;
       align-items: center;
       gap: 8px;
-      background: rgba(42,74,107,0.7);
-      border: 1px solid rgba(79,195,247,0.25);
-      border-radius: 6px;
-      color: var(--white);
-      font-family: var(--mono);
-      font-size: 0.7rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      padding: 0.5rem 1rem;
-      cursor: pointer;
-      transition: all 0.25s cubic-bezier(.4, 0, .2, 1);
-      outline: none;
-      -webkit-tap-highlight-color: transparent;
     }
 
-    .nav-btn:hover, .nav-btn:active {
-      background: var(--accent);
-      color: var(--primary);
-      border-color: var(--accent);
-      transform: scale(1.06);
-      box-shadow: 0 0 18px rgba(245,166,35,0.5);
+    .nav-btn:hover:not(:disabled) {
+      border-color: var(--ink);
+      background: var(--ink);
+      color: var(--white);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-btn:active:not(:disabled) {
+      transform: translateY(0) scale(0.95);
     }
 
     .nav-btn:disabled {
-      opacity: 0.3;
-      cursor: not-allowed;
-      transform: none;
-      box-shadow: none;
+      opacity: 0.25;
+      cursor: not-allowed
     }
 
-    .nav-btn .nav-arrow { font-size: 1rem; line-height: 1; }
+    .nav-btn-prev {
+      justify-self: start
+    }
 
-    .nav-indicator {
+    .nav-btn-next {
+      justify-self: end
+    }
+
+    .nav-progress {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 4px;
+      gap: 6px;
     }
 
-    .nav-page-label {
+    .nav-label {
       font-family: var(--mono);
-      font-size: 0.62rem;
-      color: rgba(176,184,193,0.85);
+      font-size: 10px;
       letter-spacing: 0.12em;
       text-transform: uppercase;
+      color: var(--ink-3);
+      white-space: nowrap;
+      transition: opacity 0.3s;
     }
 
-    .nav-dots { display: flex; gap: 5px; }
+    .nav-dots {
+      display: flex;
+      gap: 5px;
+      align-items: center
+    }
 
     .nav-dot {
-      width: 6px;
-      height: 6px;
+      width: 5px;
+      height: 5px;
       border-radius: 50%;
-      background: rgba(42,74,107,0.8);
-      transition: background 0.3s, transform 0.3s, box-shadow 0.3s;
+      background: var(--line);
+      transition: all 0.4s var(--ease-bouncy);
       cursor: pointer;
     }
 
     .nav-dot.active {
-      background: var(--accent);
-      transform: scale(1.5);
-      box-shadow: 0 0 8px rgba(245,166,35,0.7);
+      background: var(--gold);
+      transform: scale(1.6);
+      box-shadow: 0 0 8px rgba(184, 150, 10, 0.4);
     }
 
-    /* ── PAGE FOOTER ── */
-    .page-footer {
-      padding: 1.5rem var(--px);
-      border-top: 1.5px solid rgba(245,166,35,0.4);
+    .nav-dot:hover:not(.active) {
+      background: var(--ink-4);
+      transform: scale(1.2);
+    }
+
+    /* ── MODAL (Upgraded Transition) ── */
+    .modal-bg {
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 5, 5, 0.75);
+      backdrop-filter: blur(0px);
+      -webkit-backdrop-filter: blur(0px);
+      z-index: 9999;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      margin-top: 2rem;
-      background: rgba(11,29,51,0.92);
+      justify-content: center;
+      padding: 24px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s var(--ease-out), backdrop-filter 0.5s var(--ease-out);
+    }
+
+    .modal-bg.open {
+      opacity: 1;
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
+      pointer-events: all
     }
 
-    /* ═══════════════════════════════════════════════
-       RESPONSIVE BREAKPOINTS — Bootstrap 5 aligned
-       xs  < 320px  (mini phones: iPhone SE 1st gen)
-       sm  320–575px (small phones)
-       md  576–767px (large phones / phablets)
-       lg  768–991px (tablets / iPad mini)
-       xl  992–1199px (iPad / iPad Air)
-       xxl 1200px+  (iPad Pro / desktop)
-    ═══════════════════════════════════════════════ */
-
-    /* ── MINI PHONES ( < 320px ) ── */
-    @media (max-width: 319px) {
-      .cover-title { font-size: 1.8rem !important; }
-      .cover-subtitle { font-size: 0.78rem; }
-      .chip { font-size: 0.58rem; padding: 3px 7px; }
-      .chip-grid { gap: 5px; }
-      .step-num { width: 22px; height: 22px; font-size: 0.6rem; }
-      .data-table { font-size: 0.72rem; }
-      .data-table th, .data-table td { padding: 0.4rem 0.5rem; }
-      .team-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-      .nav-btn { padding: 0.4rem 0.6rem; font-size: 0.6rem; }
-      .section-title { font-size: 1.2rem; }
-      .toc-chapter { font-size: 0.82rem; }
+    .modal-box {
+      background: var(--white);
+      max-width: 92vw;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transform: scale(0.85) translateY(40px);
+      opacity: 0;
+      transition: transform 0.6s var(--ease-spring), opacity 0.4s ease;
+      position: relative;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4);
+      border-radius: 4px;
     }
 
-    /* ── SMALL PHONES ( 320px–575px ) ── */
-    @media (min-width: 320px) and (max-width: 575px) {
-      .cover-title { font-size: clamp(2rem, 9vw, 3rem); }
-      .chip { font-size: 0.65rem; padding: 4px 9px; }
-      .step-num { width: 26px; height: 26px; }
-      .team-grid { grid-template-columns: repeat(2, 1fr); }
-      .data-table { font-size: 0.78rem; }
-      .data-table th, .data-table td { padding: 0.55rem 0.7rem; }
-      .nav-btn { padding: 0.45rem 0.85rem; }
+    .modal-bg.open .modal-box {
+      transform: scale(1) translateY(0);
+      opacity: 1;
     }
 
-    /* ── PHABLETS / LARGE PHONES ( 576px–767px ) ── */
-    @media (min-width: 576px) and (max-width: 767px) {
-      body { max-width: 100%; }
-      .cover-title { font-size: clamp(2.8rem, 8vw, 3.8rem); }
-      .team-grid { grid-template-columns: repeat(3, 1fr); }
-      .section-title { font-size: clamp(1.6rem, 5vw, 2rem); }
-      .chapter-name { font-size: clamp(1.5rem, 5vw, 1.9rem); }
-      .page { padding: 0 clamp(1.25rem, 4vw, 2rem) 2rem; }
-      .toc-list { padding: 0 clamp(1.25rem, 4vw, 2rem) 1.5rem; }
+    .modal-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 1;
+      background: var(--ink);
+      border: none;
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--white);
+      border-radius: 50%;
+      transition: all 0.3s var(--ease-bouncy);
     }
 
-    /* ── TABLETS / IPAD MINI ( 768px–991px ) ── */
-    @media (min-width: 768px) and (max-width: 991px) {
-      body { max-width: 100%; margin: 0 auto; }
-      .cover-title { font-size: clamp(3.5rem, 7vw, 5rem); }
-      .cover { padding: 3rem 2.5rem; }
-      .team-grid { grid-template-columns: repeat(4, 1fr); gap: 14px; }
-      .section-title { font-size: 2rem; }
-      .chapter-name { font-size: 2rem; }
-      .page { padding: 0 2rem 2.5rem; }
-      .toc-list { padding: 0 2rem 1.5rem; }
-      .section-header { padding: 2rem 2rem 1rem; }
-      .toc-item { padding: 1rem 1.25rem; }
-      .body-text { font-size: 0.95rem; }
-      .data-table { font-size: 0.88rem; }
-      .chapter-break { padding: 3rem 2rem; }
-      .topbar { padding: 0.85rem 2rem; }
-      .page-footer { padding: 1.5rem 2rem; }
-      .page-nav { padding: 0.75rem 2rem; }
+    .modal-close:hover {
+      background: var(--gold);
+      transform: scale(1.1) rotate(90deg);
     }
 
-    /* ── IPAD / IPAD AIR ( 992px–1199px ) ── */
-    @media (min-width: 992px) and (max-width: 1199px) {
-      body { max-width: 100%; margin: 0 auto; }
-      .cover-title { font-size: 5.5rem; }
-      .cover { padding: 3.5rem 3rem; }
-      .team-grid { grid-template-columns: repeat(5, 1fr); gap: 16px; }
-      .section-title { font-size: 2.2rem; }
-      .chapter-name { font-size: 2.2rem; }
-      .page { padding: 0 2.5rem 3rem; }
-      .toc-list { padding: 0 2.5rem 2rem; }
-      .section-header { padding: 2.5rem 2.5rem 1.25rem; }
-      .body-text { font-size: 1rem; line-height: 1.9; }
-      .toc-item { padding: 1.1rem 1.5rem; margin-bottom: 10px; }
-      .callout { padding: 1.25rem 1.5rem; }
-      .formula-block { padding: 1.5rem; }
-      .data-table { font-size: 0.9rem; }
-      .chapter-break { padding: 3.5rem 2.5rem; }
-      .topbar { padding: 0.9rem 2.5rem; }
-      .page-footer { padding: 1.75rem 2.5rem; }
-      .page-nav { padding: 0.85rem 2.5rem; }
+    .modal-close svg {
+      width: 14px;
+      height: 14px;
+      stroke: currentColor;
+      stroke-width: 2;
+      fill: none
     }
 
-    /* ── IPAD PRO / WIDE SCREEN ( 1200px+ ) ── */
-    @media (min-width: 1200px) {
-      body { max-width: 100%; margin: 0 auto; }
-      .cover-title { font-size: 6.5rem; }
-      .cover { padding: 4rem 3.5rem; }
-      .team-grid { grid-template-columns: repeat(5, 1fr); gap: 18px; }
-      .section-title { font-size: 2.5rem; }
-      .chapter-name { font-size: 2.5rem; }
-      .page { padding: 0 3rem 3.5rem; }
-      .toc-list { padding: 0 3rem 2rem; }
-      .section-header { padding: 3rem 3rem 1.5rem; }
-      .body-text { font-size: 1.05rem; line-height: 2; }
-      .toc-item { padding: 1.2rem 1.75rem; margin-bottom: 12px; }
-      .chapter-break { padding: 4rem 3rem; }
-      .topbar { padding: 1rem 3rem; }
-      .page-footer { padding: 2rem 3rem; }
-      .page-nav { padding: 0.9rem 3rem; }
-      .chapter-num { font-size: 8rem; }
-      .nav-dots { gap: 8px; }
-      .nav-dot { width: 8px; height: 8px; }
+    .modal-img {
+      max-width: 100%;
+      max-height: 80vh;
+      object-fit: contain;
+      display: block
     }
 
-    .page-num {
+    .modal-caption {
+      padding: 0.75rem 1.25rem;
       font-family: var(--mono);
-      font-size: 0.7rem;
-      color: var(--concrete);
-      letter-spacing: 0.1em;
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      border-top: 1px solid var(--line);
     }
 
-    .page-course {
-      font-size: 0.7rem;
-      color: var(--concrete);
-      font-weight: 300;
-      font-family: var(--mono);
+    /* ── DIVIDER ── */
+    .divider {
+      height: 1px;
+      background: var(--line);
+      margin: 0 var(--px)
+    }
+
+    /* ── PROGRESS BAR ── */
+    .progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: transparent;
+      z-index: 9999;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--gold);
+      width: 0%;
+      transition: width 0.1s linear;
+      position: relative;
+    }
+
+    .progress-fill::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: -2px;
+      bottom: -2px;
+      width: 15px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8));
+      box-shadow: 0 0 10px var(--gold);
+      border-radius: 50%;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:700px) {
+
+      .p2-body,
+      .p3-top,
+      .final-body {
+        grid-template-columns: 1fr
+      }
+
+      .p2-thumbs {
+        grid-template-columns: repeat(3, 1fr)
+      }
+
+      .chapter-index {
+        display: none
+      }
+
+      .cover-title {
+        font-size: 2.4rem
+      }
     }
   </style>
 </head>
 
 <body>
 
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+
   <section class="cover" id="cover">
-    <div class="cover-orb"></div>
-    <div class="cover-scan"></div>
-    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:2rem;">
-      <span class="cover-badge">CE308L Project</span>
-      <span class="cover-edition">FEB 2026</span>
+    <div class="cover-bg"></div>
+    <div class="cover-accent-ring"></div>
+
+    <div class="cover-top">
+      <span class="cover-badge">CE308L · Theory of Structures</span>
+      <span class="cover-date">May 2026</span>
     </div>
 
-    <div style="flex:1; display:flex; flex-direction:column; justify-content:center;">
-      <h1 class="cover-title">
-        Modular<br><span>Tower</span><br>Model
-      </h1>
-      <p class="cover-subtitle">Interactive, scaled prototype for structural analysis and theory of structures.</p>
-      <div class="cover-divider"></div>
-      <div class="chip-grid">
-        <span class="chip chip-primary" style="background:rgba(255,92,26,0.2);">Theory of Structures</span>
-        <span class="chip chip-teal"
-          style="background:rgba(0,194,168,0.15); color:#00C2A8; border-color:rgba(0,194,168,0.3);">Structural
-          Analysis</span>
-        <span class="chip chip-dark">Civil Eng</span>
+    <div class="cover-body">
+      <p class="cover-eyebrow">Design &amp; Fabrication Manual</p>
+      <h1 class="cover-title">Modular</h1>
+      <div class="cover-title-sub">Tower Model</div>
+      <div class="cover-title-end">for Structural Analysis</div>
+      <div class="cover-rule"></div>
+      <p class="cover-desc">Interactive scaled prototype for structural analysis and theory of structures — CE308L.</p>
+      <div class="cover-tags">
+        <span class="tag tag-gold">Structural Analysis</span>
+        <span class="tag">Civil Engineering</span>
+        <span class="tag">Scale Model</span>
       </div>
     </div>
 
-    <div class="cover-meta">
-      <div class="cover-meta-row">
-        <div>
-          <p class="cover-label">Instructor</p>
-          <p class="cover-value">Engr. Karl Justine G. Atienza</p>
-        </div>
-        <div>
-          <p class="cover-label">Course</p>
-          <p class="cover-value">BS Civil Engineering</p>
-        </div>
-        <div class="cover-logo">JPC<br></div>
+    <div class="cover-footer">
+      <div>
+        <p class="cover-meta-label">Instructor</p>
+        <p class="cover-meta-value">Engr. Karl Justine G. Atienza</p>
+      </div>
+      <div>
+        <p class="cover-meta-label">Program</p>
+        <p class="cover-meta-value">BS Civil Engineering</p>
       </div>
     </div>
   </section>
 
-  <div class="topbar">
+  <div class="topbar" id="topbar">
+    <div class="topbar-left">
+      <div class="topbar-dot"></div>
+      <span class="topbar-title">Modular Tower Manual</span>
+    </div>
+    <span class="topbar-right">CE308L · 2026</span>
+  </div>
+
+  <div class="chapter-break section" id="ch1">
     <div>
-      <div class="topbar-title">Modular Tower Manual</div>
-      <div class="topbar-chapter">Project Reference Guide</div>
+      <p class="chapter-num">Chapter 01</p>
+      <h2 class="chapter-name">Project Overview</h2>
     </div>
-    <div class="topbar-dot"></div>
-  </div>
-  <div class="progress-bar-wrap">
-    <div id="progress-bar"></div>
+    <span class="chapter-index">01</span>
   </div>
 
-  <div class="section-header fade-in" id="toc">
-    <p class="section-tag">Navigation</p>
-    <h2 class="section-title">Table of Contents</h2>
-    <p class="section-desc">Jump to any chapter or section below.</p>
-  </div>
-
-  <ul class="toc-list fade-in">
-    <a href="#ch1" class="toc-item">
-      <span class="toc-num">01</span>
-      <span class="toc-text">
-        <span class="toc-chapter">Project Overview</span>
-        <span class="toc-sub">Objectives, Rationale, and Team</span>
-      </span>
-      <span class="toc-arrow">›</span>
-    </a>
-    <a href="#ch2" class="toc-item">
-      <span class="toc-num">02</span>
-      <span class="toc-text">
-        <span class="toc-chapter">Core Concepts</span>
-        <span class="toc-sub">Structural theory and behavior</span>
-      </span>
-      <span class="toc-arrow">›</span>
-    </a>
-    <a href="#ch3" class="toc-item">
-      <span class="toc-num">03</span>
-      <span class="toc-text">
-        <span class="toc-chapter">Materials & Budget</span>
-        <span class="toc-sub">Itemized costs and materials required</span>
-      </span>
-      <span class="toc-arrow">›</span>
-    </a>
-    <a href="#ch4" class="toc-item">
-      <span class="toc-num">04</span>
-      <span class="toc-text">
-        <span class="toc-chapter">Fabrication Procedure</span>
-        <span class="toc-sub">Step-by-step assembly guide</span>
-      </span>
-      <span class="toc-arrow">›</span>
-    </a>
-    <a href="#ch5" class="toc-item">
-      <span class="toc-num">05</span>
-      <span class="toc-text">
-        <span class="toc-chapter">Expected Outcomes</span>
-        <span class="toc-sub">Impacts and learning assessments</span>
-      </span>
-      <span class="toc-arrow">›</span>
-    </a>
-    <a href="#ch6" class="toc-item">
-      <span class="toc-num">06</span>
-      <span class="toc-text">
-        <span class="toc-chapter">Quick Reference</span>
-        <span class="toc-sub">Institutional details</span>
-      </span>
-      <span class="toc-arrow">›</span>
-    </a>
-  </ul>
-
-  <div class="chapter-break" id="ch1">
-    <div class="chapter-break-glow"></div>
-    <span class="chapter-num">01</span>
-    <p class="chapter-label">Chapter 01</p>
-    <h2 class="chapter-name">Project Overview</h2>
-  </div>
-
-  <div class="page">
-    <div class="section-header fade-in" style="padding-left:0; padding-right:0;">
-      <p class="section-tag">Chapter 01</p>
-      <h2 class="section-title">Project Overview</h2>
-    </div>
-
-    <p class="body-text fade-in">
+  <div class="page section">
+    <p class="section-label">Project Objectives</p>
+    <p class="body-text">
       This manual serves as the primary reference for the Design and Fabrication of a Modular Tower Model for Structural
-      Analysis.
+      Analysis. Each section guides the reader through component identification, assembly sequence, and structural
+      considerations.
     </p>
 
-    <div class="callout callout-note fade-in">
-      <span class="callout-tag">📋 Note</span>
-      <p>This model uses a high-precision interlocking system (LEGO) to allow civil engineering students to physically
-        manipulate variables.</p>
-    </div>
+    <p class="section-label" style="margin-top:2.5rem">Team Roster</p>
+    <div class="team-grid waterfall-grid">
 
-    <h2 class="content-h2 fade-in">Project Objectives</h2>
-    <ul class="steps fade-in">
-      <li class="step">
-        <span class="step-num">1</span>
-        <div class="step-body">
-          <p class="step-title">Develop Interactive Model</p>
-          <p class="step-desc">To develop and utilize an interactive LEGO structural model that helps students
-            understand fundamental structural engineering concepts through hands-on construction and experimentation.
-          </p>
+      <div class="team-card fade-up">
+        <div class="team-photo-wrap">
+          <img class="team-img" src="members/shane.jpg" alt="Bayle, Zhanice M.">
         </div>
-      </li>
-      <li class="step">
-        <span class="step-num">2</span>
-        <div class="step-body">
-          <p class="step-title">Demonstrate Behavior</p>
-          <p class="step-desc">To demonstrate real-life structural behavior by constructing models that represent common
-            engineering structures such as towers, frames, and braced systems.</p>
-        </div>
-      </li>
-      <li class="step">
-        <span class="step-num">3</span>
-        <div class="step-body">
-          <p class="step-title">Skill Development</p>
-          <p class="step-desc">To enhance problem-solving, critical thinking, teamwork, and collaboration skills by
-            allowing students to experiment with different structural designs.</p>
-        </div>
-      </li>
-    </ul>
-
-    <h2 class="content-h2 fade-in">Team Roster</h2>
-    <div class="team-grid fade-in">
-      <div class="team-card">
-        <img class="team-img"
-          src="https://api.dicebear.com/7.x/initials/svg?seed=Zhanice&backgroundColor=162D4A&textColor=ffffff"
-          alt="Bayle, Zhanice M.">
         <div class="team-name">Bayle, Zhanice M.</div>
-        <div class="team-role">Student Researcher</div>
+        <div class="team-role">Builder/Proposal Creator</div>
       </div>
-      <div class="team-card">
-        <img class="team-img"
-          src="https://api.dicebear.com/7.x/initials/svg?seed=Trishia&backgroundColor=162D4A&textColor=ffffff"
-          alt="David, Trishia Faye">
-        <div class="team-name">David, Trishia Faye</div>
-        <div class="team-role">Student Researcher</div>
-      </div>
-      <div class="team-card">
-        <img class="team-img"
-          src="https://api.dicebear.com/7.x/initials/svg?seed=Mark&backgroundColor=162D4A&textColor=ffffff"
-          alt="Fajiculay, Mark Angel">
-        <div class="team-name">Fajiculay, Mark Angel</div>
-        <div class="team-role">Student Researcher</div>
-      </div>
-      <div class="team-card">
-        <img class="team-img"
-          src="https://api.dicebear.com/7.x/initials/svg?seed=Jhoanna&backgroundColor=162D4A&textColor=ffffff"
-          alt="Guiab, Jhoanna Bell M.">
-        <div class="team-name">Guiab, Jhoanna Bell M.</div>
-        <div class="team-role">Student Researcher</div>
-      </div>
-      <div class="team-card">
-        <img class="team-img"
-          src="https://api.dicebear.com/7.x/initials/svg?seed=Jan&backgroundColor=162D4A&textColor=ffffff"
-          alt="Herrera, Jan Patrick P.">
-        <div class="team-name">Herrera, Jan Patrick P.</div>
-        <div class="team-role">Student Researcher</div>
-      </div>
-      <div class="team-card">
-        <img class="team-img"
-          src="https://api.dicebear.com/7.x/initials/svg?seed=Marianne&backgroundColor=162D4A&textColor=ffffff"
-          alt="Maralit, Marianne Jay V.">
-        <div class="team-name">Maralit, Marianne Jay V.</div>
-        <div class="team-role">Student Researcher</div>
-      </div>
-      <div class="team-card">
-        <img class="team-img"
-          src="https://api.dicebear.com/7.x/initials/svg?seed=Gualberto&backgroundColor=162D4A&textColor=ffffff"
-          alt="Mesana, Gualberto">
-        <div class="team-name">Mesana, Gualberto</div>
-        <div class="team-role">Student Researcher</div>
-      </div>
-      <div class="team-card">
-        <img class="team-img"
-          src="https://api.dicebear.com/7.x/initials/svg?seed=Jewel&backgroundColor=162D4A&textColor=ffffff"
-          alt="Micosa, Jewel Lorenne L.">
-        <div class="team-name">Micosa, Jewel Lorenne L.</div>
-        <div class="team-role">Student Researcher</div>
-      </div>
-      <div class="team-card">
-        <img class="team-img"
-          src="https://api.dicebear.com/7.x/initials/svg?seed=Rosario&backgroundColor=162D4A&textColor=ffffff"
-          alt="Rosario, Mark Ian D.">
-        <div class="team-name">Rosario, Mark Ian D.</div>
-        <div class="team-role">Student Researcher</div>
-      </div>
-      <div class="team-card">
-        <img class="team-img"
-          src="https://api.dicebear.com/7.x/initials/svg?seed=Aljun&backgroundColor=162D4A&textColor=ffffff"
-          alt="Rustia, Aljun C.">
-        <div class="team-name">Rustia, Aljun C.</div>
-        <div class="team-role">Student Researcher</div>
-      </div>
-    </div>
 
-  </div>
-
-  <div class="chapter-break" id="ch2">
-    <div class="chapter-break-glow"></div>
-    <span class="chapter-num">02</span>
-    <p class="chapter-label">Chapter 02</p>
-    <h2 class="chapter-name">Core Concepts</h2>
-  </div>
-
-  <div class="page">
-    <div class="section-header fade-in" style="padding-left:0; padding-right:0;">
-      <p class="section-tag">Chapter 02</p>
-      <h2 class="section-title">Core Concepts</h2>
-      <p class="section-desc">Foundational theories and key terminology for the course.</p>
-    </div>
-
-    <h2 class="content-h2 fade-in">Key Terminology</h2>
-
-    <div class="definition fade-in">
-      <p class="definition-term">TERM 1 — Theory of Structures</p>
-      <p>Complex mathematical abstractions translated into a tangible, experimental format utilizing a high-precision
-        interlocking system.</p>
-    </div>
-
-    <div class="definition fade-in" style="background:#00453E; margin-top:-0.5rem;">
-      <p class="definition-term" style="color:#4FFFF0;">TERM 2 — Force Redistribution</p>
-      <p>Demonstrated through tactile feedback that a digital simulation cannot fully replicate, showing how internal
-        forces navigate a system.</p>
-    </div>
-
-    <h2 class="content-h2 fade-in">Topic Keywords</h2>
-    <div class="chip-grid fade-in">
-      <span class="chip chip-primary">Determinacy</span>
-      <span class="chip chip-teal">Deflection</span>
-      <span class="chip chip-dark">Load Distribution</span>
-      <span class="chip chip-primary">Stability</span>
-      <span class="chip chip-teal">Braced Systems</span>
-      <span class="chip chip-dark">Structural Balance</span>
-    </div>
-
-    <div class="figure fade-in">
-      <div class="">
-        <div class="figure-icon">📐</div>
-        <p class="figure-placeholder-text">[ AutoCAD Reference ]</p>
-      </div>
-      <p class="figure-caption"><strong>Figure 2.1</strong> — AutoCAD Drawing Reference (tower (2).dwg) mapping
-        structural dimensions for assembly.</p>
-    </div>
-
-  </div>
-
-  <div class="chapter-break" id="ch3">
-    <div class="chapter-break-glow"></div>
-    <span class="chapter-num">03</span>
-    <p class="chapter-label">Chapter 03</p>
-    <h2 class="chapter-name">Materials & Budget</h2>
-  </div>
-
-  <div class="page">
-    <div class="section-header fade-in" style="padding-left:0; padding-right:0;">
-      <p class="section-tag">Chapter 03</p>
-      <h2 class="section-title">Materials & Budget</h2>
-      <p class="section-desc">List of all required materials and the estimated budget for project completion.</p>
-    </div>
-
-    <h2 class="content-h2 fade-in">Budget Summary</h2>
-
-    <div class="formula-block fade-in">
-      <span class="formula-label">Total Estimated Cost</span>
-      <span class="formula">1010.00 pesos</span>
-      <p class="formula-desc">The proposed budget is kept minimal while ensuring that all necessary materials are
-        included to successfully carry out the proposed project.</p>
-    </div>
-
-    <h3 class="content-h3 fade-in">Material Breakdown</h3>
-    <div class="table-wrapper fade-in">
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>Material</th>
-            <th>Quantity</th>
-            <th>Unit Cost (₱)</th>
-            <th>Total Cost (₱)</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Balloon Stick</td>
-            <td>1 pc</td>
-            <td>90</td>
-            <td>90</td>
-          </tr>
-          <tr>
-            <td>Oily Glue</td>
-            <td>2 pcs</td>
-            <td>60</td>
-            <td>120</td>
-          </tr>
-          <tr>
-            <td>Sintra Board</td>
-            <td>1 pc</td>
-            <td>100</td>
-            <td>100</td>
-          </tr>
-          <tr>
-            <td>PVC</td>
-            <td>1 pc</td>
-            <td>100</td>
-            <td>100</td>
-          </tr>
-          <tr>
-            <td>Cutter & Folder</td>
-            <td>1 pc each</td>
-            <td>50 each</td>
-            <td>100 total</td>
-          </tr>
-          <tr>
-            <td>Paint</td>
-            <td>1 pc</td>
-            <td>150</td>
-            <td>150</td>
-          </tr>
-          <tr>
-            <td>Sticker Paper</td>
-            <td>1 pc</td>
-            <td>50</td>
-            <td>50</td>
-          </tr>
-          <tr>
-            <td>S4S</td>
-            <td>1 pc</td>
-            <td>100</td>
-            <td>100</td>
-          </tr>
-          <tr>
-            <td>Hinge & Holder</td>
-            <td>1 pc each</td>
-            <td>100 each</td>
-            <td>200 total</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <div class="chapter-break" id="ch4">
-    <div class="chapter-break-glow"></div>
-    <span class="chapter-num">04</span>
-    <p class="chapter-label">Chapter 04</p>
-    <h2 class="chapter-name">Fabrication Procedure</h2>
-  </div>
-
-  <div class="page">
-    <div class="section-header fade-in" style="padding-left:0; padding-right:0;">
-      <p class="section-tag">Chapter 04</p>
-      <h2 class="section-title">Fabrication Procedure</h2>
-      <p class="section-desc">Procedure of Making the Tower.</p>
-    </div>
-
-    <div class="callout callout-warn fade-in">
-      <span class="callout-tag">⚠️ Construction Note</span>
-      <p>Construct the tower in detachable sections so that each part can be assembled and disassembled easily during
-        presentation.</p>
-    </div>
-
-    <h2 class="content-h2 fade-in">Step-by-step Fabrication</h2>
-    <ul class="steps fade-in">
-      <li class="step">
-        <span class="step-num">1</span>
-        <div class="step-body">
-          <p class="step-title">Setup & Preparation</p>
-          <p class="step-desc">Prepare all required materials such as balloon sticks, paste/adhesive, cutter, ruler,
-            measuring tools, and the proposed tower design. Measure and cut the balloon sticks according to the required
-            lengths for the base, columns, braces, and upper sections.</p>
+      <div class="team-card fade-up">
+        <div class="team-photo-wrap">
+          <img class="team-img" src="members/Trisha faye David.png">
         </div>
-      </li>
-      <li class="step">
-        <span class="step-num">2</span>
-        <div class="step-body">
-          <p class="step-title">Base Construction</p>
-          <p class="step-desc">Build the base first by forming a wide and stable foundation. Ensure all joints are
-            firmly attached and aligned properly.</p>
-        </div>
-      </li>
-      <li class="step">
-        <span class="step-num">3</span>
-        <div class="step-body">
-          <p class="step-title">Vertical & Horizontal Assembly</p>
-          <p class="step-desc">Assemble the vertical members or columns upward from the base, followed by horizontal
-            members and diagonal bracing to increase strength and stability.</p>
-        </div>
-      </li>
-      <li class="step">
-        <span class="step-num">4</span>
-        <div class="step-body">
-          <p class="step-title">Upper Sections & Reinforcement</p>
-          <p class="step-desc">Continue constructing the middle and upper portions of the tower, gradually reducing the
-            width as the height increases based on the design. Allow each connected section to dry properly before
-            attaching the next part. Inspect all sections and reinforce weak joints.</p>
-        </div>
-      </li>
-      <li class="step">
-        <span class="step-num">5</span>
-        <div class="step-body">
-          <p class="step-title">Storage & Transport</p>
-          <p class="step-desc">Create a storage box inspired by a chessboard-type container, with partitions or spaces
-            intended for each detachable tower section. Arrange and place all disassembled tower parts inside the box
-            properly.</p>
-        </div>
-      </li>
-    </ul>
+        <div class="team-name">Trisha Faye David</div>
+        <div class="team-role">Builder/Proposal Creator/Procurement</div>
+      </div>
 
+      <div class="team-card fade-up">
+        <div class="team-photo-wrap">
+          <img class="team-img" src="members/mark angel fajiculay.png" alt="Fajiculay, Mark A.">
+        </div>
+        <div class="team-name">Mark Angel Fajiculay</div>
+        <div class="team-role">Builder/Procurement</div>
+      </div>
+
+      <div class="team-card fade-up">
+        <div class="team-photo-wrap">
+          <img class="team-img" src="members/bell.jpg" alt="Member 4">
+        </div>
+        <div class="team-name">Jhoanna Bell Guiab</div>
+        <div class="team-role">Builder/Painter</div>
+      </div>
+
+      <div class="team-card fade-up">
+        <div class="team-photo-wrap">
+          <img class="team-img" src="members/pat.jpg" alt="Member 5">
+        </div>
+        <div class="team-name">Jan Patrick P. Herrera</div>
+        <div class="team-role">Builder/Painter</div>
+      </div>
+
+      <div class="team-card fade-up">
+        <div class="team-photo-wrap">
+          <img class="team-img" src="members/marian.jpg" alt="Member 6">
+        </div>
+        <div class="team-name">Mariane Jay Maralit</div>
+        <div class="team-role">Builder/Painter</div>
+      </div>
+
+      <div class="team-card fade-up">
+        <div class="team-photo-wrap">
+          <img class="team-img"
+            src="https://api.dicebear.com/7.x/initials/svg?seed=M7&backgroundColor=0a0a0a&textColor=b8960a"
+            alt="Member 7">
+        </div>
+        <div class="team-name">Gualberto Mesana</div>
+        <div class="team-role">Builder/Painter</div>
+      </div>
+
+      <div class="team-card fade-up">
+        <div class="team-photo-wrap">
+          <img class="team-img" src="members/jewell.jpg" alt="Member 8">
+        </div>
+        <div class="team-name">Jewel Lorenne Micosa</div>
+        <div class="team-role">Builder/Painter/Manual Creator</div>
+      </div>
+
+      <div class="team-card fade-up">
+        <div class="team-photo-wrap">
+          <img class="team-img" src="members/ian.jpg" alt="Member 9">
+        </div>
+        <div class="team-name">Mark Ian Rosario</div>
+        <div class="team-role">Drafter/Builder</div>
+      </div>
+
+      <div class="team-card fade-up">
+        <div class="team-photo-wrap">
+          <img class="team-img" src="members/aljun.png" alt="Member 10">
+        </div>
+        <div class="team-name">Aljun Rustia</div>
+        <div class="team-role">Builder/Researcher/Manual Creator</div>
+      </div>
+
+    </div>
   </div>
 
-  <div class="chapter-break" id="ch5">
-    <div class="chapter-break-glow"></div>
-    <span class="chapter-num">05</span>
-    <p class="chapter-label">Chapter 05</p>
-    <h2 class="chapter-name">Expected Outcomes</h2>
+  <div class="components-section section" id="components">
+    <div class="components-header">
+      <h2>Tower Components</h2>
+      <span>18 piece types</span>
+    </div>
+
+    <div class="components-grid waterfall-grid">
+      <div class="comp-card modal-trigger fade-up"><img src="TOS/pic1.png" alt="Piece 1">
+        <div class="comp-qty">× 2 pcs</div>
+      </div>
+      <div class="comp-card modal-trigger fade-up"><img src="TOS/pic2.png" alt="Piece 2">
+        <div class="comp-qty">× 2 pcs</div>
+      </div>
+      <div class="comp-card modal-trigger fade-up"><img src="TOS/pic3.png" alt="Piece 3">
+        <div class="comp-qty">× 2 pcs</div>
+      </div>
+      <div class="comp-card modal-trigger fade-up"><img src="TOS/pic4.png" alt="Piece 4">
+        <div class="comp-qty">× 2 pcs</div>
+      </div>
+      <div class="comp-card modal-trigger fade-up"><img src="TOS/pic5.png" alt="Piece 5">
+        <div class="comp-qty">× 2 pcs</div>
+      </div>
+      <div class="comp-card modal-trigger fade-up"><img src="TOS/pic6.png" alt="Piece 6">
+        <div class="comp-qty">× 2 pcs</div>
+      </div>
+      <div class="comp-card modal-trigger fade-up"><img src="TOS/pic7.png" alt="Piece 7">
+        <div class="comp-qty">× 8 pcs</div>
+      </div>
+      <div class="comp-card modal-trigger fade-up"><img src="TOS/pic8.png" alt="Piece 8">
+        <div class="comp-qty">× 4 pcs</div>
+      </div>
+      <div class="comp-card modal-trigger fade-up"><img src="TOS/pic9.png" alt="Piece 9">
+        <div class="comp-qty">× 2 pcs</div>
+      </div>
+      <div class="comp-card modal-trigger fade-up"><img src="TOS/pic10.png" alt="Piece 10">
+        <div class="comp-qty">× 2 pcs</div>
+      </div>
+      <div class="comp-card modal-trigger fade-up"><img src="TOS/pic11.png" alt="Piece 11">
+        <div class="comp-qty">× 2 pcs</div>
+      </div>
+      <div class="comp-card modal-trigger fade-up"><img src="TOS/pic12.png" alt="Piece 12">
+        <div class="comp-qty">× 2 pcs</div>
+      </div>
+      <div class="comp-card modal-trigger fade-up"><img src="TOS/pic13.png" alt="Piece 13">
+        <div class="comp-qty">× 2 pcs</div>
+      </div>
+      <div class="comp-card modal-trigger fade-up"><img src="TOS/pic14.png" alt="Piece 14">
+        <div class="comp-qty">× 2 pcs</div>
+      </div>
+      <div class="comp-card modal-trigger fade-up"><img src="TOS/pic15.png" alt="Piece 15">
+        <div class="comp-qty">× 2 pcs</div>
+      </div>
+      <div class="comp-card modal-trigger fade-up"><img src="TOS/pic16.png" alt="Piece 16">
+        <div class="comp-qty">× 2 pcs</div>
+      </div>
+      <div class="comp-card modal-trigger fade-up"><img src="TOS/pic17.png" alt="Piece 17">
+        <div class="comp-qty">× 2 pcs</div>
+      </div>
+      <div class="comp-card modal-trigger fade-up"><img src="TOS/pic18.png" alt="Piece 18">
+        <div class="comp-qty">× 2 pcs</div>
+      </div>
+    </div>
   </div>
 
-  <div class="page">
-    <div class="section-header fade-in" style="padding-left:0; padding-right:0;">
-      <p class="section-tag">Chapter 05</p>
-      <h2 class="section-title">Expected Outcomes</h2>
-      <p class="section-desc">The anticipated educational impacts of the model.</p>
+  <div class="phase-section section" id="phase1-layer1">
+    <div class="phase-header">
+      <div>
+        <h2>Phase 1 — Base &amp; Frame Assembly</h2>
+        <p>Connections in this phase identify the two faces being joined (e.g., AB-1). <strong>Match identical codes at
+            each corner</strong> to complete the base perimeter.</p>
+      </div>
+      <div class="phase-badge">Layer 1</div>
     </div>
 
-    <h2 class="content-h2 fade-in">Educational Value</h2>
-
-    <div class="formula-block fade-in" style="background:#FFF7E6; border-color:#F59E0B;">
-      <span class="formula-label" style="color:#92400E;">Primary Outcome</span>
-      <span class="formula" style="font-size:0.85rem; font-weight:400; color:#1A1A1A; line-height:1.6;">The expected
-        outcome of this study is the successful development of an interactive LEGO tower model that will help students
-        better understand fundamental structural engineering concepts such as stability, load distribution, balance, and
-        structural behavior.</span>
+    <div class="step-grid">
+      <div class="inspectable step-img modal-trigger"><img src="New folder/no.1.png" alt="Step 1 — Base layout">
+        <div class="img-overlay">
+          <div class="overlay-btn"><svg viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg></div><span class="overlay-label">View</span>
+        </div>
+      </div>
+      <div class="inspectable step-img modal-trigger"><img src="New folder/no.2.png" alt="Step 2 — Corner joints">
+        <div class="img-overlay">
+          <div class="overlay-btn"><svg viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg></div><span class="overlay-label">View</span>
+        </div>
+      </div>
+      <div class="inspectable step-img modal-trigger"><img src="New folder/no.3.png" alt="Step 3 — Frame connection">
+        <div class="img-overlay">
+          <div class="overlay-btn"><svg viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg></div><span class="overlay-label">View</span>
+        </div>
+      </div>
+      <div class="inspectable step-img modal-trigger"><img src="New folder/no.4.png" alt="Step 4 — Final base">
+        <div class="img-overlay">
+          <div class="overlay-btn"><svg viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg></div><span class="overlay-label">View</span>
+        </div>
+      </div>
     </div>
 
-    <div class="formula-block fade-in">
-      <span class="formula-label">Long-term Impact</span>
-      <span class="formula" style="font-size:0.85rem; font-weight:400; color:#1A1A1A; line-height:1.6;">The LEGO tower
-        model is expected to serve as a simple yet effective educational tool that demonstrates real-life structural
-        behavior, promotes experiential learning, and increases students’ interest and appreciation for structural and
-        civil engineering concepts.</span>
-    </div>
-
-    <h2 class="content-h2 fade-in">Comprehension Check</h2>
-
-    <div class="quiz-card fade-in">
-      <p class="quiz-q">Q1. What type of storage box is intended for the detachable tower sections?</p>
-      <div class="quiz-option" onclick="selectOption(this, false)">
-        <span class="quiz-letter">A</span> Metal shipping crate
-      </div>
-      <div class="quiz-option" onclick="selectOption(this, true)">
-        <span class="quiz-letter">B</span> A chessboard-type container
-      </div>
-      <div class="quiz-option" onclick="selectOption(this, false)">
-        <span class="quiz-letter">C</span> A plastic cylindrical tube
-      </div>
-      <div class="quiz-option" onclick="selectOption(this, false)">
-        <span class="quiz-letter">D</span> A standard cardboard folder
+    <div class="inspectable result-img modal-trigger" style="margin-top:1px">
+      <img src="New folder/no.5.png" alt="Completed base frame">
+      <div class="img-overlay">
+        <div class="overlay-btn"><svg viewBox="0 0 24 24">
+            <path d="M3 7V5a2 2 0 0 1 2-2h2" />
+            <path d="M17 3h2a2 2 0 0 1 2 2v2" />
+            <path d="M21 17v2a2 2 0 0 1-2 2h-2" />
+            <path d="M7 21H5a2 2 0 0 1-2-2v-2" />
+          </svg></div><span class="overlay-label">Inspect result</span>
       </div>
     </div>
-
   </div>
 
-  <div class="chapter-break" id="ch6">
-    <div class="chapter-break-glow"></div>
-    <span class="chapter-num">06</span>
-    <p class="chapter-label">Chapter 06</p>
-    <h2 class="chapter-name">Quick Reference</h2>
-  </div>
-
-  <div class="page">
-    <div class="section-header fade-in" style="padding-left:0; padding-right:0;">
-      <p class="section-tag">Chapter 06</p>
-      <h2 class="section-title">Quick Reference</h2>
-      <p class="section-desc">Institutional and Academic details for the project.</p>
+  <div class="phase-section section" id="phase1-layer2">
+    <div class="phase-header">
+      <div>
+        <h2>Phase 1 — Layer 2 Assembly</h2>
+        <p>Align the connection point labeled AB-1 on Face A with the matching AB-1 point on Face B. <strong>Press both
+            pieces firmly together</strong> until flush.</p>
+      </div>
+      <div class="phase-badge">Layer 2</div>
     </div>
 
-    <h2 class="content-h2 fade-in">Institutional Data</h2>
-    <div class="table-wrapper fade-in">
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>Information Type</th>
-            <th>Details</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Institution</td>
-            <td>John Paul College</td>
-          </tr>
-          <tr>
-            <td>Location</td>
-            <td>MG Andaya, Odiong, Roxas, Oriental Mindoro</td>
-          </tr>
-          <tr>
-            <td>Department</td>
-            <td>College of Civil Engineering, Architecture, Technology and Sciences</td>
-          </tr>
-          <tr>
-            <td>Date</td>
-            <td>February 2026</td>
-          </tr>
-        </tbody>
-      </table>
+    <div class="step-grid">
+      <div class="inspectable step-img modal-trigger"><img src="layer2/p1.png" alt="Layer 2 — Step 1">
+        <div class="img-overlay">
+          <div class="overlay-btn"><svg viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg></div><span class="overlay-label">View</span>
+        </div>
+      </div>
+      <div class="inspectable step-img modal-trigger"><img src="layer2/p2.png" alt="Layer 2 — Step 2">
+        <div class="img-overlay">
+          <div class="overlay-btn"><svg viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg></div><span class="overlay-label">View</span>
+        </div>
+      </div>
+      <div class="inspectable step-img modal-trigger"><img src="layer2/p3.png" alt="Layer 2 — Step 3">
+        <div class="img-overlay">
+          <div class="overlay-btn"><svg viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg></div><span class="overlay-label">View</span>
+        </div>
+      </div>
+      <div class="inspectable step-img modal-trigger"><img src="layer2/p4.png" alt="Layer 2 — Step 4">
+        <div class="img-overlay">
+          <div class="overlay-btn"><svg viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg></div><span class="overlay-label">View</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="inspectable result-img modal-trigger" style="margin-top:1px">
+      <img src="layer2/p5.png" alt="Completed Layer 2">
+      <div class="img-overlay">
+        <div class="overlay-btn"><svg viewBox="0 0 24 24">
+            <path d="M3 7V5a2 2 0 0 1 2-2h2" />
+            <path d="M17 3h2a2 2 0 0 1 2 2v2" />
+            <path d="M21 17v2a2 2 0 0 1-2 2h-2" />
+            <path d="M7 21H5a2 2 0 0 1-2-2v-2" />
+          </svg></div><span class="overlay-label">Inspect result</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="phase-section section" id="phase1-layer3">
+    <div class="phase-header">
+      <div>
+        <h2>Phase 1 — Layer 3 Assembly</h2>
+        <p>Align the connection point labeled AB-1 on Face A with the matching AB-1 point on Face B. <strong>Press both
+            pieces firmly together</strong> until flush.</p>
+      </div>
+      <div class="phase-badge">Layer 3</div>
+    </div>
+
+    <div class="step-grid">
+      <div class="inspectable step-img modal-trigger"><img src="layer3/p1.png" alt="Layer 3 — Step 1">
+        <div class="img-overlay">
+          <div class="overlay-btn"><svg viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg></div><span class="overlay-label">View</span>
+        </div>
+      </div>
+      <div class="inspectable step-img modal-trigger"><img src="layer3/p2.png" alt="Layer 3 — Step 2">
+        <div class="img-overlay">
+          <div class="overlay-btn"><svg viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg></div><span class="overlay-label">View</span>
+        </div>
+      </div>
+      <div class="inspectable step-img modal-trigger"><img src="layer3/p3.png" alt="Layer 3 — Step 3">
+        <div class="img-overlay">
+          <div class="overlay-btn"><svg viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg></div><span class="overlay-label">View</span>
+        </div>
+      </div>
+      <div class="inspectable step-img modal-trigger"><img src="layer3/p4.png" alt="Layer 3 — Step 4">
+        <div class="img-overlay">
+          <div class="overlay-btn"><svg viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg></div><span class="overlay-label">View</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="inspectable result-img modal-trigger" style="margin-top:1px">
+      <img src="layer3/p5.png" alt="Completed Layer 3">
+      <div class="img-overlay">
+        <div class="overlay-btn"><svg viewBox="0 0 24 24">
+            <path d="M3 7V5a2 2 0 0 1 2-2h2" />
+            <path d="M17 3h2a2 2 0 0 1 2 2v2" />
+            <path d="M21 17v2a2 2 0 0 1-2 2h-2" />
+            <path d="M7 21H5a2 2 0 0 1-2-2v-2" />
+          </svg></div><span class="overlay-label">Inspect result</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="summary-section section" id="phase1-summary">
+    <div class="summary-header">
+      <div>
+        <p class="summary-header-eyebrow">Phase 1 Summary</p>
+        <h2 class="summary-header-title">Base / Frame Assembly</h2>
+        <div class="summary-header-desc">
+          Connections in this phase identify the points where the vertical layers connect. Match identical pegs and
+          slots to stack each layer securely.
+          <ul>
+            <li>Align vertical connecting pegs on the underside of Layer 3 with the corresponding holes on the top rim
+              of
+              Layer 2. Press downward firmly until flush.</li>
+            <li>Repeat by aligning Layer 2 onto Layer 1, ensuring all corners are fully seated and level.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="summary-thumb modal-trigger">
+        <img src="layer4/fist.png" alt="Assembly thumbnail">
+      </div>
+    </div>
+
+    <div class="summary-layers waterfall-grid">
+      <div class="layer-row modal-trigger fade-up">
+        <div class="layer-img"><img src="layer4/layer3.png" alt="Layer 3 Assembly"></div>
+        <div class="layer-badge">Layer 3</div>
+      </div>
+      <div class="layer-row modal-trigger fade-up">
+        <div class="layer-img"><img src="layer4/layer2.png" alt="Layer 2 Assembly"></div>
+        <div class="layer-badge">Layer 2</div>
+      </div>
+      <div class="layer-row modal-trigger fade-up">
+        <div class="layer-img"><img src="layer4/layer1.png" alt="Layer 1 Assembly"></div>
+        <div class="layer-badge">Layer 1</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="p2-section section" id="phase2">
+    <div class="p2-title-bar">
+      <h2>Phase 2: Vertical Layer 1</h2>
+      <span>Structural Assembly</span>
+    </div>
+
+    <div class="p2-desc">
+      Connections in this phase identify the specific joining points for each structural layer. Match the corresponding
+      alphanumeric codes at each connection point to ensure proper alignment and structural integrity.
+    </div>
+
+    <div class="p2-thumbs waterfall-grid">
+      <div class="p2-thumb has-img modal-trigger fade-up"><img src="page4/c1.png" alt="Component 1"><span
+          class="p2-thumb-num">01</span></div>
+      <div class="p2-thumb has-img modal-trigger fade-up"><img src="page4/c2.png" alt="Component 2"><span
+          class="p2-thumb-num">02</span></div>
+      <div class="p2-thumb has-img modal-trigger fade-up"><img src="page4/c3.png" alt="Component 3"><span
+          class="p2-thumb-num">03</span></div>
+      <div class="p2-thumb has-img modal-trigger fade-up"><img src="page4/c4.png" alt="Component 4"><span
+          class="p2-thumb-num">04</span></div>
+      <div class="p2-thumb has-img modal-trigger fade-up"><img src="page4/c5.png" alt="Component 5"><span
+          class="p2-thumb-num">05</span></div>
+    </div>
+
+    <div class="p2-body">
+      <div class="p2-main-img modal-trigger">
+        <img src="page4/c6.png" alt="Phase 2 Assembly">
+        <div class="img-overlay">
+          <div class="overlay-btn"><svg viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg></div><span class="overlay-label">View</span>
+        </div>
+      </div>
+
+      <div class="p2-instructions waterfall-grid">
+        <div class="p2-step fade-up">
+          <div class="p2-step-num">1</div>
+          <p><strong>Layer 1:</strong> Align the connection point labeled A-1.0 on the base face with the matching A-1.1
+            point. Press firmly until flush.</p>
+        </div>
+        <div class="p2-step fade-up">
+          <div class="p2-step-num">2</div>
+          <p><strong>Layer 2:</strong> Position the next level by aligning connection points A-2.0, A-2.1, and A-2.3
+            with their corresponding counterpart. Press firmly to secure.</p>
+        </div>
+        <div class="p2-step fade-up">
+          <div class="p2-step-num">3</div>
+          <p><strong>Layer 3:</strong> Complete the face by aligning connection points A-3.0 and A-3.1 on the final
+            layer. Press firmly until flush.</p>
+        </div>
+        <div class="p2-step fade-up">
+          <div class="p2-step-num">4</div>
+          <p><strong>Repeat:</strong> Follow the exact same sequence for the remaining faces (B, C, and D) to complete
+            the Phase 2 assembly.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="p3-section section" id="phase3">
+    <div class="p3-header">
+      <h2>Phase 3: Final Structure</h2>
+      <span class="p3-phase-badge">Vertical Assembly</span>
+    </div>
+
+    <div class="p3-top">
+      <div class="p3-desc">
+        In this final phase, assemble the tower vertically by stacking each section. Match the numerical codes (1, 2, 3,
+        4) at each connection point to ensure proper alignment and structural integrity.
+        <ul>
+          <li><strong>Step-by-Step:</strong> Align the connector labeled with the corresponding number (e.g., 1 to 1) on
+            the upper component with the connection point on the base.</li>
+          <li>Press firmly until flush before proceeding to the next section.</li>
+        </ul>
+      </div>
+      <div class="p3-thumb modal-trigger">
+        <img src="page5/19.png" alt="Tower final assembly thumbnail">
+      </div>
+    </div>
+
+    <div class="p3-steps waterfall-grid">
+      <div class="p3-step-col fade-up">
+        <img src="page5/c1.png" alt="Step 1 view" class="p3-step-img">
+      </div>
+      <div class="p3-step-col fade-up">
+        <img src="page5/c2.png" alt="Step 2 view" class="p3-step-img">
+      </div>
+    </div>
+  </div>
+
+  <div class="final-section section" id="final-outcome">
+    <div class="final-header">
+      <h2>Final Outcome</h2>
+      <div class="final-complete-badge">Complete</div>
+    </div>
+
+    <div class="final-body">
+      <div class="final-desc">
+        The fully assembled Modular Tower Model stands complete, showcasing the structural integrity and precise
+        alignment of all components. All connection points are secured and the load-bearing framework is ready for
+        analysis.
+      </div>
+
+      <div class="final-img-box modal-trigger">
+        <img src="page5/final.png" alt="Final Outcome Assembly">
+        <div class="img-overlay">
+          <div class="overlay-btn"><svg viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg></div><span class="overlay-label">View Full Image</span>
+        </div>
+      </div>
     </div>
   </div>
 
   <div class="page-footer">
-    <span class="page-num">CE308L-MANUAL · 2026</span>
-    <span class="page-course">BSCE · Civil Eng.</span>
+    <span class="footer-text">CE308L Manual · 2026</span>
+    <div class="footer-dot"></div>
+    <span class="footer-text">John Paul College</span>
   </div>
 
-  <nav class="page-nav" id="pageNav">
-    <button class="nav-btn" id="prevBtn" onclick="navPage(-1)">
-      <span class="nav-arrow">‹</span> Prev
+  <nav class="bottom-nav" id="bottomNav">
+    <button class="nav-btn nav-btn-prev" id="prevBtn" onclick="navPage(-1)">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="15,18 9,12 15,6" />
+      </svg>
+      Prev
     </button>
-    <div class="nav-indicator">
-      <span class="nav-page-label" id="navLabel">Cover</span>
+    <div class="nav-progress">
+      <span class="nav-label" id="navLabel">Cover</span>
       <div class="nav-dots" id="navDots"></div>
     </div>
-    <button class="nav-btn" id="nextBtn" onclick="navPage(1)">
-      Next <span class="nav-arrow">›</span>
+    <button class="nav-btn nav-btn-next" id="nextBtn" onclick="navPage(1)">
+      Next
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="9,18 15,12 9,6" />
+      </svg>
     </button>
   </nav>
-  <div class="page-transition-overlay" id="pageOverlay"></div>
+
+  <div id="modal" class="modal-bg" onclick="closeModal()">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeModal()">
+        <svg viewBox="0 0 24 24">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+      <img id="modalImg" class="modal-img" src="" alt="">
+      <div id="modalCaption" class="modal-caption"></div>
+    </div>
+  </div>
 
   <script>
-    // ── PAGE SECTIONS ──
+    // ── STAGGERED REVEALS SETUP ──
+    // Add inline transition delays for grid elements to create waterfall reveals
+    document.querySelectorAll('.waterfall-grid').forEach(grid => {
+      const children = grid.querySelectorAll('.fade-up');
+      children.forEach((el, index) => {
+        el.style.transitionDelay = `${index * 0.1}s`;
+      });
+    });
+
     const pages = [
       { id: 'cover', label: 'Cover' },
-      { id: 'toc', label: 'Contents' },
-      { id: 'ch1', label: 'Ch. 01' },
-      { id: 'ch2', label: 'Ch. 02' },
-      { id: 'ch3', label: 'Ch. 03' },
-      { id: 'ch4', label: 'Ch. 04' },
-      { id: 'ch5', label: 'Ch. 05' },
-      { id: 'ch6', label: 'Ch. 06' },
+      { id: 'ch1', label: 'Chapter 01' },
+      { id: 'components', label: 'Components' },
+      { id: 'phase1-layer1', label: 'Phase 1 — L1' },
+      { id: 'phase1-layer2', label: 'Phase 1 — L2' },
+      { id: 'phase1-layer3', label: 'Phase 1 — L3' },
+      { id: 'phase1-summary', label: 'Phase 1 Summary' },
+      { id: 'phase2', label: 'Phase 2' },
+      { id: 'phase3', label: 'Phase 3' },
+      { id: 'final-outcome', label: 'Final Outcome' },
     ];
-    let currentPage = 0;
 
-    // Build dots
-    const dotsEl = document.getElementById('navDots');
-    pages.forEach((_, i) => {
-      const d = document.createElement('span');
+    let cur = 0;
+
+    // Build nav dots
+    const dotsContainer = document.getElementById('navDots');
+    pages.forEach((p, i) => {
+      const d = document.createElement('div');
       d.className = 'nav-dot' + (i === 0 ? ' active' : '');
+      d.title = p.label;
       d.onclick = () => goToPage(i);
-      dotsEl.appendChild(d);
+      dotsContainer.appendChild(d);
     });
 
     function updateNav() {
-      document.getElementById('navLabel').textContent = pages[currentPage].label;
-      document.getElementById('prevBtn').disabled = currentPage === 0;
-      document.getElementById('nextBtn').disabled = currentPage === pages.length - 1;
-      dotsEl.querySelectorAll('.nav-dot').forEach((d, i) => {
-        d.classList.toggle('active', i === currentPage);
+      const labelEl = document.getElementById('navLabel');
+      labelEl.style.opacity = '0';
+
+      setTimeout(() => {
+        labelEl.textContent = pages[cur].label;
+        labelEl.style.opacity = '1';
+      }, 150);
+
+      document.getElementById('prevBtn').disabled = cur === 0;
+      document.getElementById('nextBtn').disabled = cur === pages.length - 1;
+      document.querySelectorAll('.nav-dot').forEach((d, i) => {
+        d.classList.toggle('active', i === cur);
       });
     }
 
-    function goToPage(index) {
-      const overlay = document.getElementById('pageOverlay');
-      overlay.classList.add('active');
-      setTimeout(() => {
-        currentPage = Math.max(0, Math.min(pages.length - 1, index));
-        const el = document.getElementById(pages[currentPage].id);
-        if (el) {
-          const offset = el.getBoundingClientRect().top + window.scrollY - 58;
-          window.scrollTo({ top: offset, behavior: 'smooth' });
-        }
-        updateNav();
-        setTimeout(() => overlay.classList.remove('active'), 300);
-      }, 200);
+    function goToPage(i) {
+      cur = Math.max(0, Math.min(pages.length - 1, i));
+      const el = document.getElementById(pages[cur].id);
+      if (el) {
+        // Adjust scroll position if topbar is stuck
+        const yOffset = -60;
+        const y = el.getBoundingClientRect().top + window.scrollY + yOffset;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+      updateNav();
+    }
+    function navPage(dir) { goToPage(cur + dir); }
+    updateNav();
+
+    // Progress bar
+    function updateProgress() {
+      const doc = document.documentElement;
+      const scrollTop = window.scrollY;
+      const maxScroll = doc.scrollHeight - doc.clientHeight;
+      const pct = maxScroll > 0 ? (scrollTop / maxScroll) * 100 : 0;
+      document.getElementById('progressFill').style.width = pct + '%';
     }
 
-    function navPage(dir) { goToPage(currentPage + dir); }
-
-    // Detect current page on scroll
+    // Topbar scroll class & progress
     window.addEventListener('scroll', () => {
-      const doc = document.documentElement;
-      const scrolled = doc.scrollTop / (doc.scrollHeight - doc.clientHeight) * 100;
-      document.getElementById('progress-bar').style.width = Math.min(scrolled, 100) + '%';
+      document.getElementById('topbar').classList.toggle('scrolled', window.scrollY > 60);
+      updateProgress();
+      observeSectionsForNav();
+    });
 
-      // Find closest section
-      let best = 0;
+    // Scroll-based current page detection for Nav
+    function observeSectionsForNav() {
+      const offset = window.innerHeight / 2;
       pages.forEach((p, i) => {
         const el = document.getElementById(p.id);
-        if (el) {
-          const top = el.getBoundingClientRect().top;
-          if (top <= 80) best = i;
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        if (rect.top <= offset && rect.bottom > offset) {
+          if (cur !== i) { cur = i; updateNav(); }
         }
       });
-      if (best !== currentPage) {
-        currentPage = best;
-        updateNav();
-      }
-    }, { passive: true });
-
-    // Fade in on scroll
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          e.target.classList.add('visible');
-          observer.unobserve(e.target);
-        }
-      });
-    }, { threshold: 0.1 });
-    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-
-    // Quiz interaction
-    function selectOption(el, correct) {
-      const parent = el.closest('.quiz-card');
-      parent.querySelectorAll('.quiz-option').forEach(o => {
-        o.classList.remove('correct', 'wrong');
-        o.style.pointerEvents = 'none';
-      });
-      el.classList.add(correct ? 'correct' : 'wrong');
-      if (!correct) {
-        parent.querySelectorAll('.quiz-option').forEach(o => {
-          if (o.onclick && o.onclick.toString().includes('true')) {
-            o.classList.add('correct');
-          }
-        });
-      }
     }
 
-    updateNav();
+    // ── HIGH PERFORMANCE SCROLL REVEAL (Intersection Observer) ──
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px 0px -10% 0px',
+      threshold: 0.1
+    };
+
+    const sectionObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          // Optional: observer.unobserve(entry.target); // Unobserve if you only want it to animate once
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.section, .fade-up').forEach(el => {
+      sectionObserver.observe(el);
+    });
+
+    // Modal logic
+    const modal = document.getElementById('modal');
+    const modalImg = document.getElementById('modalImg');
+    const modalCap = document.getElementById('modalCaption');
+
+    document.querySelectorAll('.modal-trigger').forEach(el => {
+      el.addEventListener('click', () => {
+        const img = el.querySelector('img');
+        if (!img) return;
+        modalImg.src = img.src;
+        modalCap.textContent = img.alt || 'Detail view';
+        modal.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      });
+    });
+
+    function closeModal() {
+      modal.classList.remove('open');
+      document.body.style.overflow = '';
+      setTimeout(() => { modalImg.src = ''; }, 500); // Clear image after animation
+    }
+
+    window.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+    // Initial triggers
+    updateProgress();
   </script>
-  <!-- Bootstrap 5 JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
